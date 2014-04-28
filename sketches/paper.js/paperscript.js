@@ -1,4 +1,10 @@
-
+	project.view.zoom = .5 ;
+	project.view.center = pcenter ;
+	var pmouse, pcenter, ppoint, ctr;
+	
+	$('body, html').mousewheel(function(event) {
+		project.view.zoom = Math.max( ( project.view.zoom + event.deltaY * .01 ) , .01 );
+	});
 	
 	var hitOptions = {
 		segments: true,
@@ -34,47 +40,34 @@
 	});
 	circlePaths.push(largeCircle);
 
-	function onMouseMove(event) {
-		//largeCircle.position = event.point;
-		//generateConnections(circlePaths);
-	}
 	
 	//Drag elements
 	function onMouseDown(event) {
-		path = null;
+		path_element = path_pan = null;
 		var hitResult = project.hitTest(event.point, hitOptions);
-		if (!hitResult)
-			return;
-
-		if (hitResult) {
-			path = hitResult.item;
+		if ( !hitResult ) {
+			path_pan = new Point();
+			path_pan.add(event.point);
+		} else {
+			path_element = hitResult.item;
 		}
 	}
 
 	function onMouseDrag(event) {
-		if (path) {
-			path.position += event.delta;
+		if (path_element) {
+			path_element.position += event.delta;
 			generateConnections(circlePaths);
+		} else if ( path_pan ) {
+			path_pan.add(event.point);
+			var des = traslladar (event.downPoint , event.point);
+			paper.project.view.center = des;
 		}
-		var ctr = new Point(0, -1000)
 	}
 	
 	
 	//----------------------- ZOOM / PAN -------------------------
 	
-	project.view.zoom = .5 ;
-	project.view.center = pcenter ;
-	var pmouse, pcenter, ppoint, ctr;
 	
-	$('body, html').mousewheel(function(event) {
-		//console.log(event.deltaX, event.deltaY, event.deltaFactor);
-		project.view.zoom = Math.max( ( project.view.zoom + event.deltaY * .01 ) , .01 );
-		//project.view.scrollBy(event.point);
-	});
-	function onMouseDown (event) {
-		path = new Point();
-		path.add(event.point);
-	}
 	function traslladar(a,b){
 		var center = paper.project.view.center;
 		var desX = (a.x - b.x);
@@ -82,12 +75,6 @@
 
 		var newCenter = [center.x + desX , center.y + desY];
 		return newCenter;
-	}
-	function onMouseDrag(event) {
-		path.add(event.point);
-
-		var des = traslladar (event.downPoint , event.point);
-		paper.project.view.center = des;
 	}
 
             
