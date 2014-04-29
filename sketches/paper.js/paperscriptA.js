@@ -25,22 +25,19 @@
 
 	var handle_len_rate = 2.5;
 	var circlePaths = [];
-	var connectionPaths = [];
 	var reliefPaths = [];
 	var radius = 50;
 	for (var i = 0, l = ballPositions.length; i < l; i++) {
 		var circlePath = new Path.Circle({
 			center: ballPositions[i],
-			radius: 50,
-			
+			radius: 50
 		});
 		circlePaths.push(circlePath);
 	}
 
 	var layerA = new Layer({
 		children: circlePaths,
-		position: view.center,
-		fillColor: 'black'
+		position: view.center
 	});
 
 	
@@ -68,8 +65,7 @@
 	}
 
 	function onMouseUp(event) {
-		generateRelief()
-
+		generateRelief(circlePaths)
 	}
 	
 	
@@ -90,11 +86,9 @@
 
 
 	var connections = new Group();
-	var connectionPaths = [];
 	function generateConnections(paths) {
 		// Remove the last connection paths:
 		connections.children = [];
-		connectionPaths = [];
 
 		for (var i = 0, l = paths.length; i < l; i++) {
 			for (var j = i - 1; j >= 0; j--) {
@@ -102,7 +96,6 @@
 				if (path) {
 					connections.appendTop(path);
 					//path.removeOnMove();
-					connectionPaths.push(path);
 				}
 			}
 		}
@@ -110,49 +103,29 @@
 
 
 	var layerB = new Layer();
-	var couche = [];
-	function generateRelief() {
-		layerB.activate();
-		layerB.insertBelow(layerA);
-		couche = [];
-		var paths = circlePaths.concat(connectionPaths);
-		//var merged = merge(paths);
-		paths = merge(paths);
-		
-		for (var j = 0, l = paths.length; j < l ; j++) {
-			couche[j] = paths[j].clone()
-			couche[j].set({
-				strokeWidth: 30,
-				strokeColor: new Color(.5),
-				fillColor: 'red'
-				//opacity: .3
+	function generateRelief(paths) {
+		reliefPaths = [];
+		layerB.remove();
+		for (var i = 0, l = paths.length; i < l; i++) {
+			var circlePath = new Path.Circle({
+				center: paths[i].position,
+				radius: 60,
+				fillColor: 'grey'
 			});
+			reliefPaths.push(circlePath);
 		}
-		
-		/*
-		//reliefPaths = [];
-		layerB = new Layer();
-		
-		for (var i = 0; i < 4; i++) {
-			for (var j = 0, l = paths.length; j < l ; j++) {
-				couche[i] = [] ;
-				couche[i][j] = paths[j].clone()
-				couche[i][j].set({
-					strokeWidth: 30*i,
-					strokeColor: new Color(1 - 1/i),
-					//opacity: .3
-				});
-			}
-		}
-		
 		layerB = new Layer({
-			children: couche,
-			position: view.center,
-			//fillColor: 'black'
+			children: reliefPaths,
+			position: view.center
 		});
-		*/
 		
+		var merged = merge(paths);
 
+		merged[0].set({
+		  fillColor: "yellow",
+		  opacity: 0.5
+		});
+		//layerA.insertAbove(layerB)
 	}
 
 	generateConnections(circlePaths);
