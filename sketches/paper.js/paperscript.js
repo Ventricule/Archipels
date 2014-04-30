@@ -216,63 +216,6 @@
 	// MERGING SYSTEM
 	// ------------------------------------------------
 
-	/*var c, circles, merge, mergeOne, overlaps, x, _i, _len, _ref;
-
-	overlaps = function(path, other) {
-	  return !(path.getIntersections(other).length === 0);
-	};
-
-	mergeOne = function(path, others) {
-	  var i, merged, other, union, _i, _len, _ref;
-	  for (i = _i = 0, _len = others.length; _i < _len; i = ++_i) {
-		other = others[i];
-		if (overlaps(path, other)) {
-		  union = path.unite(other);
-		  merged = mergeOne(union, others.slice(i + 1));
-		  return (_ref = others.slice(0, i)).concat.apply(_ref, merged);
-		}
-	  }
-	  return others.concat(path);
-	};
-
-	merge = function(paths) {
-	  var path, result, _i, _len;
-	  result = [];
-	  for (_i = 0, _len = paths.length; _i < _len; _i++) {
-		path = paths[_i];
-		result = mergeOne(path, result);
-	  }
-	  return result;
-	};*/
-	/*
-	function overlaps(path, other) {
-	  return !(path.getIntersections(other).length === 0);
-	};
-
-	function mergeOne(path, others){
-		for (var i = 0, var l = others.length ; i < l ; i++) {
-			other = others[i];
-			if (overlaps(path, other)) {
-				path = path.unite(other);
-			}
-		}
-		return path;
-	}
-
-	function merge(paths) {
-		var result;
-		for (var i = 0, var l = paths.length ; i < l ; i++) {
-			for (var j = 0, var len = others.length ; j < len ; j++) {
-				other = others[i];
-				if (overlaps(path, other)) {
-					path = path.unite(other);
-				}
-			}
-			result = mergeOne( paths[i], result );
-		}
-		return result;
-	}*/
-
 	function overlaps(path, other) {
 		return !(path.getIntersections(other).length === 0);
 	};
