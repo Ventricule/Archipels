@@ -1,11 +1,11 @@
-	project.view.zoom = .5 ;
-	project.view.center = pcenter ;
+	project.view.zoom = .5;
+	project.view.center = pcenter;
 	var pmouse, pcenter, ppoint, ctr;
-	
-	$('body, html').mousewheel(function(event) {
-		project.view.zoom = Math.max( ( project.view.zoom + event.deltaY * .01 ) , .01 );
+
+	$('body, html').mousewheel(function (event) {
+		project.view.zoom = Math.max((project.view.zoom + event.deltaY * .01), .01);
 	});
-	
+
 	var hitOptions = {
 		segments: true,
 		stroke: true,
@@ -13,17 +13,19 @@
 		tolerance: 5
 	};
 
-	// Ported from original Metaball script by SATO Hiroyuki
-	// http://park12.wakwak.com/~shp/lc/et/en_aics_script.html
+	var layerB = new Layer();
+	var layerA = new Layer();
+	
+
 	project.currentStyle = {
-		fillColor: 'black'
+		fillColor: new Color(1),
+		backgroundColor: 'grey'
 	};
-	
-	
+
 	var elements = $(".elmts").html();
 	var ballPositions = $.parseJSON(elements);
 
-	var handle_len_rate = 2.5;
+	var handle_len_rate = 2.4;
 	var circlePaths = [];
 	var connectionPaths = [];
 	var reliefPaths = [];
@@ -31,28 +33,22 @@
 	for (var i = 0, l = ballPositions.length; i < l; i++) {
 		var circlePath = new Path.Circle({
 			center: ballPositions[i],
-			radius: 50,
-			
+			radius: radius,
 		});
 		circlePaths.push(circlePath);
 	}
 
-	var layerA = new Layer({
-		children: circlePaths,
-		position: view.center,
-		fillColor: 'black'
-	});
+	var group_circles = new Group(circlePaths);
 
-	
 	//Drag elements
 	function onMouseDown(event) {
 		path_element = path_pan = null;
-		var hitResult = layerA.hitTest(event.point, hitOptions);
-		if ( !hitResult ) {
+		var hitResult = group_circles.hitTest(event.point, hitOptions);
+		if (hitResult) {
+			path_element = hitResult.item;
+		} else {
 			path_pan = new Point();
 			path_pan.add(event.point);
-		} else {
-			path_element = hitResult.item;
 		}
 	}
 
@@ -60,41 +56,39 @@
 		if (path_element) {
 			path_element.position += event.delta;
 			generateConnections(circlePaths);
-		} else if ( path_pan ) {
+		} else if (path_pan) {
 			path_pan.add(event.point);
-			var des = traslladar (event.downPoint , event.point);
+			var des = traslladar(event.downPoint, event.point);
 			paper.project.view.center = des;
 		}
 	}
 
 	function onMouseUp(event) {
 		generateRelief()
-
 	}
-	
-	
+
+
 	//----------------------- ZOOM / PAN -------------------------
-	
-	
-	function traslladar(a,b){
+
+
+	function traslladar(a, b) {
 		var center = paper.project.view.center;
 		var desX = (a.x - b.x);
-		var desY= (a.y - b.y);
+		var desY = (a.y - b.y);
 
-		var newCenter = [center.x + desX , center.y + desY];
+		var newCenter = [center.x + desX, center.y + desY];
 		return newCenter;
 	}
 
-            
+
 	//------------------------------------------------------------
 
 
 	var connections = new Group();
-	var connectionPaths = [];
+
 	function generateConnections(paths) {
 		// Remove the last connection paths:
 		connections.children = [];
-		connectionPaths = [];
 
 		for (var i = 0, l = paths.length; i < l; i++) {
 			for (var j = i - 1; j >= 0; j--) {
@@ -102,55 +96,47 @@
 				if (path) {
 					connections.appendTop(path);
 					//path.removeOnMove();
-					connectionPaths.push(path);
+					//connectionPaths.push(path);
 				}
 			}
 		}
 	}
 
+	var coucheA = new Group();
+	var coucheB = new Group();
 
-	var layerB = new Layer();
-	var couche = [];
 	function generateRelief() {
-		layerB.activate();
-		layerB.insertBelow(layerA);
-		couche = [];
-		var paths = circlePaths.concat(connectionPaths);
-		//var merged = merge(paths);
-		paths = merge(paths);
-		
-		for (var j = 0, l = paths.length; j < l ; j++) {
-			couche[j] = paths[j].clone()
-			couche[j].set({
-				strokeWidth: 30,
-				strokeColor: new Color(.5),
-				fillColor: 'red'
-				//opacity: .3
-			});
-		}
+		coucheA.children = [];
+		coucheB.children = [];
+		var connections_copy = connections.clone();
+		var group_circles_copy = group_circles.clone();
+		coucheA.addChildren(connections_copy.children);
+		coucheA.addChildren(group_circles_copy.children);
 		
 		/*
-		//reliefPaths = [];
-		layerB = new Layer();
-		
-		for (var i = 0; i < 4; i++) {
-			for (var j = 0, l = paths.length; j < l ; j++) {
-				couche[i] = [] ;
-				couche[i][j] = paths[j].clone()
-				couche[i][j].set({
-					strokeWidth: 30*i,
-					strokeColor: new Color(1 - 1/i),
-					//opacity: .3
-				});
-			}
-		}
-		
-		layerB = new Layer({
-			children: couche,
-			position: view.center,
-			//fillColor: 'black'
+		coucheA.set({
+			shadowColor: new Color(1),
+			// Set the shadow blur radius to 12:
+			shadowBlur: 100,
+			// Offset the shadow by { x: 5, y: 5 }
+			shadowOffset: new Point(0, 0)
 		});
 		*/
+		
+		coucheB.addChildren( merge(coucheA.children) );
+		coucheA.children = [];
+		
+		
+		for (var i = 0 ; i < 6 ; i++) {
+			var niveau = coucheB.clone();
+			niveau.set({
+				strokeColor: 'white',
+				strokeWidth: 60*i,
+				fillColor: 'white',
+				opacity: .3
+			});
+			niveau.removeOnDown();
+		}
 		
 
 	}
@@ -174,9 +160,9 @@
 			return;
 		} else if (d < radius1 + radius2) { // case circles are overlapping
 			u1 = Math.acos((radius1 * radius1 + d * d - radius2 * radius2) /
-					(2 * radius1 * d));
+				(2 * radius1 * d));
 			u2 = Math.acos((radius2 * radius2 + d * d - radius1 * radius1) /
-					(2 * radius2 * d));
+				(2 * radius2 * d));
 		} else {
 			u1 = 0;
 			u2 = 0;
@@ -225,12 +211,12 @@
 			length: length
 		});
 	}
-	
+
 	// ------------------------------------------------ 
 	// MERGING SYSTEM
 	// ------------------------------------------------
 
-	var c, circles, merge, mergeOne, overlaps, x, _i, _len, _ref;
+	/*var c, circles, merge, mergeOne, overlaps, x, _i, _len, _ref;
 
 	overlaps = function(path, other) {
 	  return !(path.getIntersections(other).length === 0);
@@ -257,4 +243,61 @@
 		result = mergeOne(path, result);
 	  }
 	  return result;
+	};*/
+	/*
+	function overlaps(path, other) {
+	  return !(path.getIntersections(other).length === 0);
+	};
+
+	function mergeOne(path, others){
+		for (var i = 0, var l = others.length ; i < l ; i++) {
+			other = others[i];
+			if (overlaps(path, other)) {
+				path = path.unite(other);
+			}
+		}
+		return path;
+	}
+
+	function merge(paths) {
+		var result;
+		for (var i = 0, var l = paths.length ; i < l ; i++) {
+			for (var j = 0, var len = others.length ; j < len ; j++) {
+				other = others[i];
+				if (overlaps(path, other)) {
+					path = path.unite(other);
+				}
+			}
+			result = mergeOne( paths[i], result );
+		}
+		return result;
+	}*/
+
+	function overlaps(path, other) {
+		return !(path.getIntersections(other).length === 0);
+	};
+
+	function mergeOne(path, others) {
+		var union, merged;
+		for (var i = 0, l = others.length; i < l; i++) {
+			if (overlaps(path, others[i])) {
+				var _ref;
+				union = path.unite(others[i]);			
+				merged = mergeOne(union, others.slice(i + 1));
+				union.remove();
+				return (_ref = others.slice(0, i)).concat.apply(_ref, merged);
+				//merged = union = null;
+			}
+		}
+		union = merged = null;
+		return others.concat(path);
+	};
+
+	function merge(paths) {
+		var result;
+		result = [];
+		for (var i = 0, l = paths.length; i < l; i++) {
+			result = mergeOne(paths[i], result);
+		}
+		return result;
 	};
