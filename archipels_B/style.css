@@ -1,11 +1,11 @@
 /*
-	Theme Name: Archipels B
-	Theme URI: 
-	Description: version de travail
-	Version: 0.1
-	Author: 
-	Author URI: 
-	Tags:
+	Theme Name: HTML5 Blank
+	Theme URI: http://html5blank.com
+	Description: HTML5 Blank WordPress Theme
+	Version: 1.4.2
+	Author: Todd Motto (@toddmotto)
+	Author URI: http://toddmotto.com
+	Tags: Blank, HTML5, CSS3
 	
 	License: MIT
 	License URI: http://opensource.org/licenses/mit-license.php
@@ -191,6 +191,28 @@ p {
 	
 }
 
+#liste_elements {
+	position: fixed;
+	top: 35px;
+	left: 530px;
+	right: 35px;
+	bottom: 35px;
+	overflow-y: scroll;
+	z-index: 9999;
+	background: #ddd;
+	box-shadow: 1px 1px 18px;
+	padding:5px;
+}
+#liste_elements>div {
+	width: 150px;
+	float: left;
+	text-align: center;
+	margin: 5px;
+	height: 166px;
+	overflow: hidden;
+	cursor:pointer;
+}
+
 #fullscreenView {
 	position:fixed;
 	width:100%;
@@ -286,11 +308,11 @@ p {
 #champ-recherche {
 	position: fixed;
 	top: 5px;
-	left: 967px;
+	right: 35px;
 }
 #champ-recherche input{
 	border:1px solid black;
-	background:#ddd;
+	/*background:#ddd;*/
 	padding: 0px 5px;
 }
 #champ-recherche button{
@@ -701,7 +723,7 @@ p {
 	position:relative;
 	text-align:center;
 }
-#panneau .miniature>img {
+#panneau .miniature:not(.table)>img {
 	width: 100%;
 	height: auto;
 	cursor:move;
@@ -1219,7 +1241,19 @@ p {
 .atlas #recherche #formule{
 	line-height: 20px;
 }
-.atlas #recherche .bouton{
+.atlas #recherche .class1{
+	width: 20px;
+	height: 20px;
+	display: inline-block;
+	line-height: 17px;
+	text-align: center;
+	margin: 0 2px 5px 2px;
+	border: 1px solid #ccc;
+	/*box-shadow: 2px 2px 0 #ddd;*/
+	cursor:pointer;
+	background-color: #ddd;
+}
+.atlas #recherche .class2{
 	width: 20px;
 	height: 20px;
 	border: 1px solid #ccc;
@@ -1236,6 +1270,15 @@ p {
 .atlas #recherche .bouton.enter{
 	background: #ddd;
 	box-shadow: none;
+	width: 20px;
+	height: 20px;
+	border: 1px solid #ccc;
+	display: inline-block;
+	line-height: 17px;
+	text-align: center;
+	margin: 0 2px 5px 2px;
+	/*box-shadow: 2px 2px 0 #ddd;*/
+	cursor:pointer;
 }
 .atlas #recherche .champ .bouton.enter{
 	display:block;
@@ -1252,7 +1295,12 @@ p {
 	text-align: center;
 	cursor:text;
 }
-.atlas #recherche .bouton img{
+.atlas #recherche .class1 img{
+	width:auto;
+	height:auto;
+	vertical-align:middle;
+}
+.atlas #recherche .class2 img{
 	width:12px;
 	height:12px;
 	vertical-align:middle;
@@ -1278,9 +1326,14 @@ div#cursor {
 .atlas #outils .bouton_periode{
 	position: fixed;
 	top: 5px;
-	left: 667px;
+	left: 617px;
 }
 .atlas #outils .bouton_geographie{
+	position: fixed;
+	top: 5px;
+	left: 717px;
+}
+.atlas #outils .bouton_laliste{
 	position: fixed;
 	top: 5px;
 	left: 817px;
