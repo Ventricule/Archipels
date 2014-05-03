@@ -7,10 +7,15 @@
 			<div id="centre">
 				
 				<?php 
+				
+				$template_url = get_bloginfo('template_url');
+				$elementsTable = array();
+				
 				$args = array (
 					'post_type'              => 'element',
 					'posts_per_page'         => '-1',
 				);
+				
 
 				// The Query
 				$query = new WP_Query( $args );
@@ -26,7 +31,7 @@
 						
 						$nom = get_the_title($id);
 						$legende = fabriqueLegende($id);
-						$abrege = get_field('abrege', $id);
+						$abrege = get_field('abrege', $id);												$miniature = get_field('image', $id);						$miniature = $miniature['sizes'][ 'thumbnail' ];
 						
 						$classesA = get_field('classification_a', $id);
 						$classesB = get_field('classification_b', $id);
@@ -36,13 +41,14 @@
 							$classesB_str = $classesB;
 						}
 						
+						
 						$sortie =		"<div class='hide'>";
 						$sortie .=		"<div class='nom'>".$nom."</div>";
 						$sortie .=		"<div class='abrege'>".$abrege."</div>";
-						$sortie .=		"<div class='legende'>".$legende."</div>";
+						$sortie .=		"<div class='legende'>".$legende."</div>";												$sortie .=		"<div class='miniature'>".$miniature."</div>";
 						$sortie .=		"</div>";
 						?>
-						<div id="<?php echo $id ; ?>" class="ui-widget-content elementSymbole <?php echo $classesA." ".$classesB_str; ?>" data-date="<?php echo $date ?>" style="left:<?php echo $coord[0]; ?>px;top:<?php echo $coord[1]; ?>px;">
+						<div id="<?php echo $id ; ?>" class="ui-widget-content elementSymbole <?php echo $classesA." ".$classesB_str; ?> id-<?php echo $id ; ?>" data-date="<?php echo $date ?>" style="left:<?php echo $coord[0]; ?>px;top:<?php echo $coord[1]; ?>px;">
 							
 							<svg xmlns="http://www.w3.org/2000/svg" version="1.1" class="anneaux">
 								<?php
@@ -60,6 +66,7 @@
 								$query2 = new WP_Query( $args );
 								// The Loop
 								$j=0;
+								$tables = array();
 								if ( $query2->have_posts() ) {
 									while ( $query2->have_posts() ) {
 										$query2->the_post();
@@ -70,6 +77,7 @@
 											$hsl = rgbToHsl($r, $g, $b);
 											//$sortValue = $hsl[h] * 5 + $hsl[s] * 2 + $hsl[l];
 											$rotateVal = $hsl[h];
+											$tables[] = get_the_ID();
 										?>
 											<line x1="250" y1="250" x2="400" y2="250" style="stroke:<?php echo '#'.$rgb; ?>;" transform="rotate(<?php echo $rotateVal*360; ?>, 250, 250)" />
 											  <!--<circle cx="250" cy="250" r="<?php //echo 40+ $j*4; ?>" stroke="<?php //echo get_field('couleur'); ?>"
@@ -81,6 +89,19 @@
 									// no posts found
 								}
 								wp_reset_postdata();
+								
+								$thisElement['x'] 		= $coord[0];
+								$thisElement['y']		= $coord[1];
+								$thisElement['date'] 	= $date;
+								$thisElement['class_a'] = $classesA;
+								$thisElement['class_b'] = $classesB;
+								$thisElement['tables'] 	= $tables;
+								$thisElement['nom'] 	=  $nom;
+								$thisElement['abrege'] 	=  $abrege;
+								$thisElement['legende'] =  $legende;
+								$thisElement['id'] 		=  $id;
+								
+								$elementsTable[] = $thisElement;
 								?>
 							</svg>
 							<div class="classification" title="<?php echo $nom; ?>">
@@ -142,6 +163,10 @@
 		</div>
 	</div>
 	
+	<script type='text/javascript'>
+		var elements_list_json = <?php echo(json_encode($elementsTable)); ?>;
+	</script>
+	
 	<div id="map">
 	
 		<?php echo GeoMashup::map('map_content=global'); ?>
@@ -156,24 +181,39 @@
 		<div id="recherche">
 			<div id="formule">
 				<div class="symboles">
-					<div class="bouton" title="plan" ><img src="<?php echo get_bloginfo('template_url') ?>/img/plan.svg" alt="plan" width="20" height="20" /></div><span class="detail">Plan</span><br>
-					<div class="bouton" title="espace"><img src="<?php echo get_bloginfo('template_url') ?>/img/espace.svg" alt="espace" width="20" height="20" /></div><span class="detail">Espace</span><br>
-					<div class="bouton" title="immateriel"><img src="<?php echo get_bloginfo('template_url') ?>/img/immateriel.svg" alt="immateriel" width="20" height="20" /></div><span class="detail">Immateriel</span><br>
-					<div class="bouton" title="volume"><img src="<?php echo get_bloginfo('template_url') ?>/img/volume.svg" alt="volume" width="20" height="20" /></div><span class="detail">Volume</span><br>
-					<div class="bouton" title="structure_humaine"><img src="<?php echo get_bloginfo('template_url') ?>/img/structure_humaine.svg" alt="structure_humaine" width="20" height="20" /></div><span class="detail">S<sup>truct</sup> Humaine</span><br>
-					<div class="bouton" title="structure_naturelle"><img src="<?php echo get_bloginfo('template_url') ?>/img/structure_naturelle.svg" alt="structure_naturelle" width="20" height="20" /></div><span class="detail">S<sup>truct</sup> Naturelle</span><br>
-					<div class="bouton" title="sonore"><img src="<?php echo get_bloginfo('template_url') ?>/img/sonore.svg" alt="sonore" width="20" height="20" /></div><span class="detail">Sonore</span><br>
-					<div class="bouton" title="temporel"><img src="<?php echo get_bloginfo('template_url') ?>/img/temporel.svg" alt="temporel" width="20" height="20" /></div><span class="detail">Temporel</span><br>
-					<div class="bouton" title="representation"><img src="<?php echo get_bloginfo('template_url') ?>/img/representation.svg" alt="representation" width="20" height="20" /></div><span class="detail">Représentation</span><br>
+					<div class="bouton class1" title="immateriel"><img src="<?php echo $template_url ?>/img/immateriel.png" alt="immateriel" width="20" height="20" /></div><span class="detail">Immateriel</span><br>
+					<div class="bouton class1" title="plan" ><img src="<?php echo $template_url ?>/img/plan.png" alt="plan" width="20" height="20" /></div><span class="detail">Plan</span><br>
+					<div class="bouton class1" title="volume"><img src="<?php echo $template_url ?>/img/volume.png" alt="volume" width="20" height="20" /></div><span class="detail">Volume</span><br>
+					<div class="bouton class2" title="structure_humaine"><img src="<?php echo $template_url ?>/img/structure_humaine.svg" alt="structure_humaine" width="20" height="20" /></div><span class="detail">S<sup>truct</sup> Humaine</span><br>
+					<div class="bouton class2" title="structure_naturelle"><img src="<?php echo $template_url ?>/img/structure_naturelle.svg" alt="structure_naturelle" width="20" height="20" /></div><span class="detail">S<sup>truct</sup> Naturelle</span><br>
+					<div class="bouton class2" title="sonore"><img src="<?php echo $template_url ?>/img/sonore.svg" alt="sonore" width="20" height="20" /></div><span class="detail">Sonore</span><br>
+					<div class="bouton class2" title="temporel"><img src="<?php echo $template_url ?>/img/temporel.svg" alt="temporel" width="20" height="20" /></div><span class="detail">Temporel</span><br>
+					<div class="bouton class2" title="espace"><img src="<?php echo $template_url ?>/img/espace.svg" alt="espace" width="20" height="20" /></div><span class="detail">Espace</span><br>
+					<div class="bouton class2" title="representation"><img src="<?php echo $template_url ?>/img/representation.svg" alt="representation" width="20" height="20" /></div><span class="detail">Représentation</span><br>
 					<div class="bouton enter" title="ou" >⋃</div>« ou »
 				</div>
 				<div class="champ"></div>
 			</div>
 		</div>
 		
-		<label class="bouton_classification"><input type="checkbox" id="show_classification">Classification</label>
-		<label class="bouton_periode"><input type="checkbox" id="show_historique">Période</label>
-		<label class="bouton_geographie"><input type="checkbox" id="show_carte">Atlas géographique</label>
+		<label class="bouton_classification">
+			<input type="checkbox" id="show_classification" class="tips-bottom" title="Classification" >
+				<img src="<?php echo $template_url ?>/img/classification.png" width="23" height="13" />
+		</label>
+		<label class="bouton_periode">
+			<input type="checkbox" id="show_historique" class="tips-bottom" title="Période">
+				<img src="<?php echo $template_url ?>/img/periode.png" width="23" height="13" />
+		</label>
+		<label class="bouton_geographie">
+			<input type="checkbox" id="show_carte" class="tips-bottom"  title="Atlas géographique">
+				<img src="<?php echo $template_url ?>/img/map.png" width="23" height="13" />
+		</label>				
+		<?php // if ( is_user_logged_in() ) { ?>
+		<label class="bouton_laliste">
+			<input type="checkbox" id="show_laliste" class="tips-bottom"  title="Liste">
+				<img src="<?php echo $template_url ?>/img/liste.png" width="23" height="13" />
+		</label>
+		<?php // } ?>
 		
 		<div id="champ-recherche">
 			<?php get_template_part('searchform'); ?>
