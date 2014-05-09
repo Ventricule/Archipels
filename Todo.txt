@@ -1,0 +1,7 @@
+TO DO :
+
+- arrière plan des tables qui s'ajuste avec le zoom et définit la surface
+- peaufiner menu
+- Blobs  / carte
+- Carte : icônes qui s'ajustent à la taille du zoom
+- …
