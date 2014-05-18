@@ -4,4 +4,9 @@ TO DO :
 - peaufiner menu
 - Blobs  / carte
 - Carte : icônes qui s'ajustent à la taille du zoom
+- Zoom glissant dans toutes les parties
+- Nouvelles icônes Immatériel / Plan / Volume
 - …
+
+Idées :
+- dans table : auto-zoom quand clic sur image de l'aperçu (aperçu interactif)
