@@ -101,16 +101,18 @@ $(function() {
 			}	
 	// Remplir le panneau
 	$(document).on( 'click', ".elementSymbole .classification", function (e){
-		if ( !$('#panneau').is(":visible") ) { 
-			$('#panneau').show(); 
-			reduirePanneau();
+		if ( $('#interface').hasClass("agrandit") ) { 
+			agrandirPanneau(false);
+		} else if ( $('#interface').hasClass("reduit") ) { 
+			reduirePanneau(false);
 		}
 		afficherPanneau( 'element', $(e.currentTarget).parent().attr('id') );
 	});
 	$(document).on( 'click', ".element", function (e){
-		if ( !$('#panneau').is(":visible") ) { 
-			$('#panneau').show(); 
-			reduirePanneau();
+		if ( $('#interface').hasClass("agrandit") ) { 
+			agrandirPanneau(false);
+		} else if ( $('#interface').hasClass("reduit") ) { 
+			reduirePanneau(false);
 		}
 		afficherPanneau( 'element', $(e.currentTarget).attr('id') );
 	});
@@ -153,14 +155,19 @@ $(function() {
 		}
 	});
 	function fermerPanneau(){
-		$("#interface .modifier").hide();
-		$('#panneau').hide();
-		$('#panneau2').hide();
-		$('#interface').removeClass('agrandit').addClass('reduit');
-		$("#ouvrirPanneau").show();
+		//$("#interface .modifier").hide();
+		//$('#panneau').hide();
+		//$('#panneau2').hide();
+		//$('#interface').removeClass('agrandit reduit').addClass('ferme');
+		//$("#ouvrirPanneau").show();
+		replierPanneau2();
 		setCookie('panneau', 0);
+		$('#interface').animate({
+			"left": -460
+		}, 500);
 	}
-	function agrandirPanneau(){
+	function agrandirPanneau(autofill){			
+		autofill = (typeof autofill === "undefined") ? true : autofill;
 		$("#ouvrirPanneau").hide();
 		$('#panneau').removeClass('reduit').addClass('agrandit');
 		$('#interface').removeClass('reduit');
@@ -169,12 +176,15 @@ $(function() {
 		$(".nano").nanoScroller(); 
 		setCookie('panneau', 2);
 		if ( $('#panneau .content').children().length == 0 ) {
-			if ( $('body').hasClass('single-table') ) {
+			if ( $('body').hasClass('single-table') && autofill) {
 				afficherPanneau( 'table', table_id);
 			} else if ($('body').hasClass('atlas')) {
 			
 			}
 		}
+		$('#interface').animate({
+			"left": 40
+		}, 500);
 	}
 	function reduirePanneau(){
 		$("#ouvrirPanneau").hide();
@@ -193,15 +203,17 @@ $(function() {
 			
 			}
 		}
+		$('#interface').animate({
+			"left": 40
+		}, 500);
 	}
 	function deployerPanneau2(){
 			$('#panneau2').show();
 			$('#enlarge').html("←");
-			//$('#panneau #enlarge').appendTo('#panneau2');
 			$('#panneau .meta, #interface').addClass('deploye');
-			//$('.meta .classification').addClass('bloc');
 			$('#panneau .texte-element').appendTo('#panneau2 .texte');
 			$(".nano").nanoScroller();
+			$('#interface').width(1220);
 			setCookie('panneau', 3);
 	}
 	function replierPanneau2(){
@@ -210,7 +222,7 @@ $(function() {
 			//$('#panneau2 .meta').appendTo('#panneau .texte');
 			$('#panneau2 .texte-element').appendTo('#panneau .texte');
 			$('#enlarge').html("↔");
-			//$('#panneau2 #enlarge').prependTo('#panneau');
+			$('#interface').width(460);
 			$('#panneau2').hide();
 			$(".nano").nanoScroller();
 			setCookie('panneau', 2);
@@ -272,16 +284,21 @@ $(function() {
 		}
 	}, '.classification .boite img, .classification .boite span');
 	function surligner(classe){
-		$('.elementSymbole').addClass('non-surligne');
-		$('.elementSymbole').removeClass('surligne');
-		if (classe instanceof Array){
-			classe.forEach( function(value){
-				$('.elementSymbole.'+value).removeClass('non-surligne');
-				$('.elementSymbole.'+value).addClass('surligne');
-			} );
+		if (!classe) {
+			$('.elementSymbole').removeClass('non-surligne');
+			$('.elementSymbole').removeClass('surligne');
 		} else {
-			$('.elementSymbole.'+classe).removeClass('non-surligne');
-			$('.elementSymbole.'+classe).addClass('surligne');
+			$('.elementSymbole').addClass('non-surligne');
+			$('.elementSymbole').removeClass('surligne');
+			if (classe instanceof Array){
+				classe.forEach( function(value){
+					$('.elementSymbole.'+value).removeClass('non-surligne');
+					$('.elementSymbole.'+value).addClass('surligne');
+				} );
+			} else {
+				$('.elementSymbole.'+classe).removeClass('non-surligne');
+				$('.elementSymbole.'+classe).addClass('surligne');
+			}
 		}
 	}
 	function focus(id){
@@ -316,7 +333,7 @@ $(function() {
 			
 			$('#fullscreenView').show();
 		}
-	}, '.miniature img');
+	}, '.miniature:not(.table) img');
 	$(document).on({
 		click: function() {
 			$('.miniature iframe').clone().appendTo('#fullscreenView');
@@ -356,10 +373,189 @@ $(function() {
 		$('#menu_table .liste-sequences').slideToggle(50);
 	});
 	$(document).on( 'click', "#menu_table .arbre .couleur, #menu_table .arbre .nom", function (e){
-		$('#panneau').show();
+		$('#panneau').show();				agrandirPanneau();
 		afficherPanneau( 'table', table_id);
 	});
 	
+	
+	/*------------------------------------------------------------------------------------------------------------*\
+				MENU
+	\*------------------------------------------------------------------------------------------------------------*/
+var $this, $thisButton, $thisTitle = $(".titleBlock:eq(0)"), $thisLine, itemName, menu;
+
+var baseMov = 25,
+    vertMov = 56,
+    ratio = 0,
+    numero = '*[data-num="' + ratio + '"]';
+
+// when the display button is clicked :
+$("#display.button").on('click', function (event) {
+    $thisButton = $(this);
+    menu = $("#menu .subMenu");
+    if ($('*[data-num="' + ratio + '"]').hasClass("level1")) {
+        if ($(this).hasClass("close")) { //open the button
+            $('*[data-num="' + ratio + '"]').css("opacity", 0);
+            animateDown();
+            open();
+        } else if ($(this).hasClass("open")) { //close the button
+            $('*[data-num="' + ratio + '"]').css("opacity", 1);
+            animateUp();
+            $(".displayTitle").show();
+            close();
+        }
+    } else {
+        if ($(this).hasClass("close")) { //open the button
+            animateDown();
+            open();
+            setTimeout(function () {
+                $(".displayTitle").hide();
+            }, 200);
+        } else if ($(this).hasClass("open")) { //close the button
+            $('*[data-num="' + ratio + '"]').css("opacity", 1);
+            animateUp();
+            $(".displayTitle").show();
+            close();
+        }
+    }
+});
+
+$(".titleBlock.level1").on('click', function (event) {
+    shiftLeft();
+    $thisTitle = $(this);
+    shiftRight();
+    $thisButton = $(".titleBlock.level2");
+    menu = $(".titleBlock.level2").find("#listWarp");
+    close();
+    $thisButton = $("#display");
+    menu = $("#menu").children();
+    $('*[data-num="' + ratio + '"]').css("opacity", 1);
+    ratio = $(this).attr("data-num");
+    $(".displayTitle").hide();
+    animateDown();
+    itemName = $(this).find(".title").text();
+    setTimeout(function () {
+        display();
+        $(".displayTitle").show();
+        close();
+        setTimeout(function () {
+            animateUp();
+        }, 300);
+    }, 300);
+});
+
+$(".titleBlock.level2").on('click', function (event) {
+	if ( ratio != $(this).attr("data-num") ){
+		shiftLeft();
+		$thisTitle = $(this);
+		shiftRight();
+    }
+	$(".displayTitle").hide();
+	$('*[data-num="' + ratio + '"]').css("opacity", 1);
+	ratio = $(this).attr("data-num");
+	animateDown();
+	$thisButton = $(this);
+	menu = $(this).find("#listWarp");
+	if ($(this).hasClass("close")) {
+		open();
+	} else {
+		close();
+	}
+});
+
+
+$(".line").on('click', function (event) {
+    event.stopPropagation()
+    $thisLine = $(this).text();
+    $thisButton = $("#display");
+    menu = $("#menu").children();
+    close();
+    animateDown();
+    highlighter = $(this);
+    highlight();
+    itemName = "Table : "+$thisLine ;//'Table <div class="plus open"></div>' + $thisLine + $(this).text();
+    display();
+    $(".displayTitle").show();
+    setTimeout(function () {
+        animateUp();
+    }, 300);
+});
+
+
+
+
+
+
+
+
+
+
+function open() {
+    $thisButton.removeClass("close").addClass("open");
+    plusOpen();
+    setTimeout(function () {
+        menu.show().fadeTo(300, 1);
+    }, 200);
+}
+
+function close() {
+    $thisButton.removeClass("open").addClass("close");
+    plusClose();
+    menu.fadeTo(300, 0).hide();
+}
+
+function plusOpen() {
+    $thisButton.find(".plus").animate({
+        color: "#000",
+        backgroundColor: "#fff"
+    }, 200);
+}
+
+function plusClose() {
+    $thisButton.find(".plus").animate({
+        color: "#fff",
+        backgroundColor: "#000"
+    }, 200);
+}
+
+function shiftRight() {
+    $thisTitle.animate({
+        "margin-left": "41"
+    }, 100);
+}
+
+function shiftLeft() {
+    $thisTitle.delay(80).animate({
+        "margin-left": "12"
+    }, 100);
+}
+
+
+function survol() {
+
+}
+function display() {
+    $("#display").find(".displayTitle").html(itemName);
+}
+
+function highlight() {
+    $(".highlight").removeClass("highlight");
+    highlighter.addClass("highlight");
+}
+
+function animateDown() {
+    $thisButton.animate({
+        "top": baseMov + (vertMov * ratio)
+    }, 200);
+}
+
+function animateUp() {
+    $thisButton.animate({
+        "top": baseMov
+    }, 200);
+}
+
+//$(".line").click();
+
 	
 	/*------------------------------------------------------------------------------------------------------------*\
 				IF TABLE
@@ -1411,6 +1607,20 @@ $(function() {
 					}
 				});
 				$.contextMenu({
+					selector: '.elementListed', 
+					callback: function(key, options) {
+						if ( key == 'copier' ) {
+							setCookie('pressepapier', $(this).attr('data-id') );
+						} else if ( key == 'editer' ) {
+							window.open( admin_url + "post.php?post=" + $(this).attr('data-id') + "&action=edit" );
+						}
+					},
+					items: {
+						"copier": {name: "Copier", icon: "copy"},
+						"editer": {name: "Éditer"},
+					}
+				});
+				$.contextMenu({
 					selector: '#atlas', 
 					callback: function(key, options) {
 						if ( key == 'nouveau' ) {
@@ -1563,7 +1773,42 @@ $(function() {
 		$( "#amount" ).val( "$" + $( "#slider-range" ).slider( "values", 0 ) + " - $" + $( "#slider-range" ).slider( "values", 1 ) );
 		
 		//méthode de selection
-		var selection;
+		var selection;	
+		
+		// Liste
+		$('#show_laliste').change(function(){
+			if ( this.checked ) {
+				var liste = $('<div/>');
+				liste.attr('id', 'liste_elements');
+				$('.elementSymbole').each(function() {
+					var abrege = $(this).children('.hide').children('.abrege').html();
+					var legende = $(this).children('.hide').children('.legende').html();
+					var miniature = $(this).children('.hide').children('.miniature').html();
+					var id = $(this).attr('id');
+					var element = $('<div/>');
+					var image = $('<img/>').attr({ 'src' : miniature , 'width' : 150, 'height' : 150 });
+					abrege = $('<p/>').attr('class','detail').html(abrege);
+					legende = $('<p/>').attr('class','detail').html(legende);
+					element.append(image, abrege, legende);
+					element.attr('data-id', id);
+					element.attr('class', 'elementListed');
+					liste.append(element);
+				});
+				liste.children('div').hover( function() {
+					surligner('id-' + $(this).attr('data-id') );
+				} );
+				liste.children('div').click( function() {
+					var element = $( '.elementSymbole#' + $(this).attr('data-id') );
+					element.children('.classification').trigger('click');
+				});
+				liste.mouseleave( function() { surligner(0); } );
+				$('body').append(liste);
+			} else {
+				$("#liste_elements").remove();
+				surligner(0);
+			}
+		});
+		
 		
 		// Période
 		$('#show_historique').change(function(){
@@ -1577,10 +1822,8 @@ $(function() {
 			} else {
 				$("#historique").hide();
 				surligner(0);
-				$('.elementSymbole').removeClass('non-surligne');
-				$('.elementSymbole').removeClass('surligne');
 			}
-		});
+		});							
 		
 		// Vue géographique
 		$('#show_carte').change(function(){
@@ -1594,8 +1837,6 @@ $(function() {
 			} else {
 				$("#map").css("top","-99999px");
 				surligner(0);
-				$('.elementSymbole').removeClass('non-surligne');
-				$('.elementSymbole').removeClass('surligne');
 			}
 		});
 		
@@ -1611,8 +1852,6 @@ $(function() {
 			} else {
 				$("#recherche").hide();
 				surligner(0);
-				$('.elementSymbole').removeClass('non-surligne');
-				$('.elementSymbole').removeClass('surligne');
 			}
 		});
 		
