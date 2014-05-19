@@ -157,6 +157,133 @@ p {
 }
 
 /*------------------------------------*\
+    MENU
+\*------------------------------------*/
+#menu {
+    font-family: arial;
+    font-size: 1.3em;
+    padding: 20px;
+    width: auto;
+    height: auto;
+    display: inline-block;
+	pointer-events:auto;
+}
+#menuwrap {
+	position:absolute;
+	top:-7px;
+	left: 467px;
+	width:1000px;
+	height: 1000px;
+	pointer-events:none;
+}
+#display {
+    font-family: arial;
+    font-size: 1.3em;
+    width: auto;
+    height: 28px;
+	box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.5);
+	-moz-box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.5);
+	-webkit-box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.5);
+    z-index:999;
+	cursor: pointer;
+    position: absolute;
+    border: none;
+    top: 25px;
+    left: 33px;
+	pointer-events:auto;
+}
+.block {
+    width: auto;
+    cursor: pointer;
+	box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.5);
+	-moz-box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.5);
+	-webkit-box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.5);
+    display: table;
+    margin: 5px;
+    margin-top : 5px;
+    margin-bottom : 28px;
+}
+.plus {
+    width: 28px;
+    height: 28px;
+    color: white;
+    background: black;
+    display: block;
+	float: left;
+    border-right: 1px solid black;
+}
+.open .plus {
+	background-image:url('img/IconesMenu/fleche_N.png');
+}
+.close .plus {
+	background-image:url('img/IconesMenu/plus_B.png');
+}
+.displayTitle {
+    display: block;
+    padding: 7px 10px 5px 10px;
+    vertical-align: middle;
+    background: white;
+	float:left;
+	height: 28px;
+}
+.title {
+    display: block;
+    padding: 7px 10px 5px 10px;
+    vertical-align: middle;
+    background: white;
+    height: 28px;
+	float: left;
+}
+.titleBlock {
+	margin-left: 13px;
+}
+.subMenu {
+    display: none;
+}
+#list {
+    list-style: none;
+    padding: 0px;
+    margin: 0px;
+    cursor: pointer;
+    display: inline-block !important;
+    position: absolute;
+    background: white;
+}
+
+#listWarp {
+    display: none;
+}
+.line {
+    height: 28px;
+    width: auto;
+    line-height: 28px;
+    padding:0px 10px 0px 10px;
+}
+.line:hover {
+    color: #fff;
+    text-decoration: none;
+}
+.line>a {
+	text-decoration: none;
+	border-bottom: none;
+}
+.title:hover {
+    color: #000;
+    background: white;
+}
+#tableHead {
+    margin-bottom: 10px;
+}
+.highlight {
+    background: blue !important;
+    color: #fff;
+}
+.inline {
+    display : inline-block;
+}
+
+
+/*------------------------------------*\
     STRUCTURE
 \*------------------------------------*/
 
@@ -280,7 +407,7 @@ p {
 	font-weight: bolder;
 	border-radius: 16px;
 }
-.close { cursor:pointer; display:inline-block; margin-left:10px; }
+.close { cursor:pointer; }
 .non-souligne { border:0; }
 #warning hr{
 	margin:3px 0;
@@ -539,11 +666,14 @@ p {
 /*----Panneau-------------------------*/
 #interface{
 	position: fixed;
-	top: 0;
-	left: 35px;
+	top: 3%;
+	left: -460px;
 	width: 460px;
 	bottom:0;
-	height: 100%;
+	height: 93%;
+	box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.5);
+	-moz-box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.5);
+	-webkit-box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.5);
 }
 #interface.reduit{
 	bottom:inherit;
@@ -562,15 +692,14 @@ p {
 	background: #FFF;
 	padding: 20px;
 	overflow: hidden;
-	display: none;
 	height: 100%;
 	bottom:0;
-	margin-top:5px;
+	margin-top:0;
 }
 #panneau2{
-	position: fixed;
-	top: 29px;
-	left: 495px;
+	position: absolute;
+	top: 0;
+	left: 460px;
 	bottom: 0;
 	width: 760px;
 	background: #FFF;
@@ -578,6 +707,7 @@ p {
 	overflow: hidden;
 	display: none;
 	padding-left: 0;
+	z-index: 999;
 }
 .en-tete {
 	position:relative;
@@ -593,7 +723,11 @@ p {
 	left:20px;
 	cursor:pointer;
 }
-
+#edit_element {
+	position: absolute;
+	top: 4px;
+	left: 221px;
+}
 #panneau.reduit #reduire {
 	position:absolute;
 	top: 2px;
@@ -679,7 +813,7 @@ p {
 	font-size:14px;
 	position:absolute;
 	top: 2px;
-	right:20px;
+	left: 430px;
 	cursor:pointer;
 }
 #panneau .citation {
@@ -869,26 +1003,22 @@ p {
 	background: #fff;
 	z-index: 99;
 }
-#menu_table #bandeau .arbre {
+ul, li {
+	list-style: none;
+}
+ul {
+	padding-left: 12px;
+}
+#interface .arbre {
+	left: 480px;
 	position: absolute;
-	top: 5px;
-	left: 44px;
-	width: 370px;
-	text-align: left;
+	top: 20px;
+	width: 200px;
 }
 #menu_table #bandeau .arbre .arbo {
 	position: absolute;
 	top: 0;
 	right: 0px;
-}
-#menu_table #bandeau .arbre .couleur{
-	height: 10px;
-	margin: auto;
-	margin-bottom: 0;
-	width: 10px;
-	margin-left:2px;
-	display:inline-block;
-	cursor:pointer;
 }
 #menu_table #bandeau .arbre .nom{
 	cursor:pointer;
@@ -924,30 +1054,13 @@ p {
 	margin: 0 5px 5px 5px;
 	border-top: 1px solid #ddd;
 }
-#menu_table .liste .couleur{
-	height: 20px;
-	margin: auto;
-	margin-bottom: 5px;
-	cursor: pointer;
-	width: 136px;
-	float: left;
-	margin-right: 0px;
-}
-#menu_table .liste .couleur p{
-	display:none;
-	text-align: left;
-	line-height: 20px;
-	margin: 0 3px;
-}
-#menu_table .liste .couleur p a{
-	display:block;
-	width:100%;
-	height:100%;
-	border:0;
-}
-#menu_table .liste .couleur p a span{
-	background:#fff;
-	padding: 0px 5px;
+.couleur{
+	height: 13px;
+	width: 13px;
+	display: inline-block;
+	border: 1px solid white;
+	outline: 1px solid black;
+	margin-right: 10px;
 }
 #menu_table .liste .add {
 	margin-left: 10px;

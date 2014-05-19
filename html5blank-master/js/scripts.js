@@ -101,16 +101,18 @@ $(function() {
 			}	
 	// Remplir le panneau
 	$(document).on( 'click', ".elementSymbole .classification", function (e){
-		if ( !$('#panneau').is(":visible") ) { 
-			$('#panneau').show(); 
-			agrandirPanneau();
+		if ( $('#interface').hasClass("agrandit") ) { 
+			agrandirPanneau(false);
+		} else if ( $('#interface').hasClass("reduit") ) { 
+			reduirePanneau(false);
 		}
 		afficherPanneau( 'element', $(e.currentTarget).parent().attr('id') );
 	});
 	$(document).on( 'click', ".element", function (e){
-		if ( !$('#panneau').is(":visible") ) { 
-			$('#panneau').show(); 
+		if ( $('#interface').hasClass("agrandit") ) { 
 			agrandirPanneau(false);
+		} else if ( $('#interface').hasClass("reduit") ) { 
+			reduirePanneau(false);
 		}
 		afficherPanneau( 'element', $(e.currentTarget).attr('id') );
 	});
@@ -153,14 +155,19 @@ $(function() {
 		}
 	});
 	function fermerPanneau(){
-		$("#interface .modifier").hide();
-		$('#panneau').hide();
-		$('#panneau2').hide();
-		$('#interface').removeClass('agrandit').addClass('reduit');
-		$("#ouvrirPanneau").show();
+		//$("#interface .modifier").hide();
+		//$('#panneau').hide();
+		//$('#panneau2').hide();
+		//$('#interface').removeClass('agrandit reduit').addClass('ferme');
+		//$("#ouvrirPanneau").show();
+		replierPanneau2();
 		setCookie('panneau', 0);
+		$('#interface').animate({
+			"left": -460
+		}, 500);
 	}
-	function agrandirPanneau(autofill){			autofill = (typeof autofill === "undefined") ? true : autofill;
+	function agrandirPanneau(autofill){			
+		autofill = (typeof autofill === "undefined") ? true : autofill;
 		$("#ouvrirPanneau").hide();
 		$('#panneau').removeClass('reduit').addClass('agrandit');
 		$('#interface').removeClass('reduit');
@@ -175,6 +182,9 @@ $(function() {
 			
 			}
 		}
+		$('#interface').animate({
+			"left": 40
+		}, 500);
 	}
 	function reduirePanneau(){
 		$("#ouvrirPanneau").hide();
@@ -193,15 +203,17 @@ $(function() {
 			
 			}
 		}
+		$('#interface').animate({
+			"left": 40
+		}, 500);
 	}
 	function deployerPanneau2(){
 			$('#panneau2').show();
 			$('#enlarge').html("←");
-			//$('#panneau #enlarge').appendTo('#panneau2');
 			$('#panneau .meta, #interface').addClass('deploye');
-			//$('.meta .classification').addClass('bloc');
 			$('#panneau .texte-element').appendTo('#panneau2 .texte');
 			$(".nano").nanoScroller();
+			$('#interface').width(1220);
 			setCookie('panneau', 3);
 	}
 	function replierPanneau2(){
@@ -210,7 +222,7 @@ $(function() {
 			//$('#panneau2 .meta').appendTo('#panneau .texte');
 			$('#panneau2 .texte-element').appendTo('#panneau .texte');
 			$('#enlarge').html("↔");
-			//$('#panneau2 #enlarge').prependTo('#panneau');
+			$('#interface').width(460);
 			$('#panneau2').hide();
 			$(".nano").nanoScroller();
 			setCookie('panneau', 2);
@@ -365,6 +377,185 @@ $(function() {
 		afficherPanneau( 'table', table_id);
 	});
 	
+	
+	/*------------------------------------------------------------------------------------------------------------*\
+				MENU
+	\*------------------------------------------------------------------------------------------------------------*/
+var $this, $thisButton, $thisTitle = $(".titleBlock:eq(0)"), $thisLine, itemName, menu;
+
+var baseMov = 25,
+    vertMov = 56,
+    ratio = 0,
+    numero = '*[data-num="' + ratio + '"]';
+
+// when the display button is clicked :
+$("#display.button").on('click', function (event) {
+    $thisButton = $(this);
+    menu = $("#menu .subMenu");
+    if ($('*[data-num="' + ratio + '"]').hasClass("level1")) {
+        if ($(this).hasClass("close")) { //open the button
+            $('*[data-num="' + ratio + '"]').css("opacity", 0);
+            animateDown();
+            open();
+        } else if ($(this).hasClass("open")) { //close the button
+            $('*[data-num="' + ratio + '"]').css("opacity", 1);
+            animateUp();
+            $(".displayTitle").show();
+            close();
+        }
+    } else {
+        if ($(this).hasClass("close")) { //open the button
+            animateDown();
+            open();
+            setTimeout(function () {
+                $(".displayTitle").hide();
+            }, 200);
+        } else if ($(this).hasClass("open")) { //close the button
+            $('*[data-num="' + ratio + '"]').css("opacity", 1);
+            animateUp();
+            $(".displayTitle").show();
+            close();
+        }
+    }
+});
+
+$(".titleBlock.level1").on('click', function (event) {
+    shiftLeft();
+    $thisTitle = $(this);
+    shiftRight();
+    $thisButton = $(".titleBlock.level2");
+    menu = $(".titleBlock.level2").find("#listWarp");
+    close();
+    $thisButton = $("#display");
+    menu = $("#menu").children();
+    $('*[data-num="' + ratio + '"]').css("opacity", 1);
+    ratio = $(this).attr("data-num");
+    $(".displayTitle").hide();
+    animateDown();
+    itemName = $(this).find(".title").text();
+    setTimeout(function () {
+        display();
+        $(".displayTitle").show();
+        close();
+        setTimeout(function () {
+            animateUp();
+        }, 300);
+    }, 300);
+});
+
+$(".titleBlock.level2").on('click', function (event) {
+	if ( ratio != $(this).attr("data-num") ){
+		shiftLeft();
+		$thisTitle = $(this);
+		shiftRight();
+    }
+	$(".displayTitle").hide();
+	$('*[data-num="' + ratio + '"]').css("opacity", 1);
+	ratio = $(this).attr("data-num");
+	animateDown();
+	$thisButton = $(this);
+	menu = $(this).find("#listWarp");
+	if ($(this).hasClass("close")) {
+		open();
+	} else {
+		close();
+	}
+});
+
+
+$(".line").on('click', function (event) {
+    event.stopPropagation()
+    $thisLine = $(this).text();
+    $thisButton = $("#display");
+    menu = $("#menu").children();
+    close();
+    animateDown();
+    highlighter = $(this);
+    highlight();
+    itemName = "Table : "+$thisLine ;//'Table <div class="plus open"></div>' + $thisLine + $(this).text();
+    display();
+    $(".displayTitle").show();
+    setTimeout(function () {
+        animateUp();
+    }, 300);
+});
+
+
+
+
+
+
+
+
+
+
+function open() {
+    $thisButton.removeClass("close").addClass("open");
+    plusOpen();
+    setTimeout(function () {
+        menu.show().fadeTo(300, 1);
+    }, 200);
+}
+
+function close() {
+    $thisButton.removeClass("open").addClass("close");
+    plusClose();
+    menu.fadeTo(300, 0).hide();
+}
+
+function plusOpen() {
+    $thisButton.find(".plus").animate({
+        color: "#000",
+        backgroundColor: "#fff"
+    }, 200);
+}
+
+function plusClose() {
+    $thisButton.find(".plus").animate({
+        color: "#fff",
+        backgroundColor: "#000"
+    }, 200);
+}
+
+function shiftRight() {
+    $thisTitle.animate({
+        "margin-left": "41"
+    }, 100);
+}
+
+function shiftLeft() {
+    $thisTitle.delay(80).animate({
+        "margin-left": "12"
+    }, 100);
+}
+
+
+function survol() {
+
+}
+function display() {
+    $("#display").find(".displayTitle").html(itemName);
+}
+
+function highlight() {
+    $(".highlight").removeClass("highlight");
+    highlighter.addClass("highlight");
+}
+
+function animateDown() {
+    $thisButton.animate({
+        "top": baseMov + (vertMov * ratio)
+    }, 200);
+}
+
+function animateUp() {
+    $thisButton.animate({
+        "top": baseMov
+    }, 200);
+}
+
+//$(".line").click();
+
 	
 	/*------------------------------------------------------------------------------------------------------------*\
 				IF TABLE
