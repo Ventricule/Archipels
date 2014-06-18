@@ -233,14 +233,57 @@ function createElement($id, $instance, $top, $left, $width, $height, $capsuleTop
 	}
 }
 
-function createNote($left, $top, $width, $height, $couleur, $val){
-	return ( '<div class="note" style="position:absolute;top:'.$top.'px;left:'.$left.'px;width:'.$width.'px;height:'.$height.'px;"><textarea rows="1" cols="10" style="background:'.$couleur.';">'.strip_tags($val).'</textarea></div>' );
+function tableList() {
+						// WP_Query arguments
+						$args = array (
+							'post_type'              => 'table',
+							'posts_per_page'         => '-1',
+						);
+
+						// The Query
+						$query = new WP_Query( $args );
+
+						// The Loop
+						$tables = array();
+						if ( $query->have_posts() ) {
+							while ( $query->have_posts() ) {
+								$query->the_post();
+								
+								$rgb = substr( get_field('couleur'), 1 );
+								$r = hexdec(substr($rgb,0,2));
+								$g = hexdec(substr($rgb,2,2));
+								$b = hexdec(substr($rgb,4,2));
+								$hsl = rgbToHsl($r, $g, $b);
+								$sortValue = $hsl[h] * 5 + $hsl[s] * 2 + $hsl[l];
+								$tables["$sortValue"] = array(
+									'couleur' => get_field('couleur'),
+									'abrege' => get_field('abrege'),
+									'id' => get_the_id(),
+									'lien' => get_permalink()
+								);
+							}
+							ksort($tables);
+						}
+						$output .= '' ;
+						foreach($tables as $table){
+							$output .= '<li class="button" data-id="'.$table[id].'" data-page="table"><div class="couleur" id="'.$table[id].'" style="background:'.$table[couleur].'"></div><a href="'.$table[lien].'">'.$table[abrege].'</a></li>';
+						}
+						// Restore original Post Data
+						wp_reset_postdata();
+						if (have_modification_right() ){
+							$output .= '<div class="line"><a href="'.admin_url().'post-new.php?post_type=table" target="_blank" class="noir">+ Nouvelle table</a></div>';
+						}
+						return $output;
 }
-function createLigne($left, $top, $width, $height, $couleur, $pathString){
+
+function createNote($left, $top, $width, $height, $couleur, $val, $zindex=1){
+	return ( '<div class="note" style="position:absolute;top:'.$top.'px;left:'.$left.'px;width:'.$width.'px;height:'.$height.'px; z-index: ' . $zindex . ';"><textarea rows="1" cols="10" style="background:'.$couleur.';">'.strip_tags($val).'</textarea></div>' );
+}
+function createLigne($left, $top, $width, $height, $couleur, $pathString, $zindex=1, $strokewidth=1){
 	$num = round( rand(0, 9999999) );
-	$svg	 = '<svg xmlns="http://www.w3.org/2000/svg" version="1.1" class="ligne" style="position:absolute;width:'.$width.'px;height:'.$height.'px;left:'.$left.'px;top:'.$top.'px;">';
-	$svg	.=  '<defs><marker id="arrow'.$num.'" viewBox="0 0 10 10" refX="1" refY="5" markerUnits="userSpaceOnUse" orient="auto" markerWidth="8" markerHeight="8"><polyline points="0,0 10,5 0,10 1,5" fill="'.$couleur.'" /></marker></defs>';
-	$svg 	.= '<path d="'.$pathString.'" style="stroke: '.$couleur.'; fill:none;" marker-end="url(#arrow'.$num.')"/>';
+	$svg	 = '<svg xmlns="http://www.w3.org/2000/svg" version="1.1" class="ligne" style="position:absolute;width:'.$width.'px;height:'.$height.'px;left:'.$left.'px;top:'.$top.'px;z-index: ' . $zindex . ';">';
+	$svg	.=  '<defs><marker id="arrow'.$num.'" viewBox="0 0 40 40" refX="30" refY="20" markerUnits="strokeWidth" orient="auto" markerWidth="7" markerHeight="7"><polyline points="3,2 40,20 3,38 0,32 28,20 0,8" fill="'.$couleur.'" /></marker></defs>';
+	$svg 	.= '<path d="'.$pathString.'" style="stroke: '.$couleur.'; fill:none; stroke-width: '.$strokewidth.'" marker-end="url(#arrow'.$num.')"/>';
 	$svg 	.= '</svg>';
 	return $svg ;
 }

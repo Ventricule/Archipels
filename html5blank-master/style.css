@@ -159,127 +159,152 @@ p {
 /*------------------------------------*\
     MENU
 \*------------------------------------*/
+
+/* ASPECT */
 #menu {
+    position:absolute;
+    top:0;
+    right:-23px;
     font-family: arial;
-    font-size: 1.3em;
-    padding: 20px;
-    width: auto;
-    height: auto;
-    display: inline-block;
-	pointer-events:auto;
+    font-size: 16px;
+    line-height:28px;    
 }
-#menuwrap {
-	position:absolute;
-	top:-7px;
-	left: 467px;
-	width:1000px;
-	height: 1000px;
-	pointer-events:none;
+.open-button {
+    position: absolute;
+    height:28px;
+    width:28px;
+    background: #000;
+    color:#FFF;
+    background-image: url('http://www.archipels.org/atlas/wp-content/themes/html5blank-master/img/IconesMenu/plus_B.png');
+    cursor:pointer;
 }
-#display {
-    font-family: arial;
-    font-size: 1.3em;
-    width: auto;
-    height: 28px;
-	box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.5);
-	-moz-box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.5);
-	-webkit-box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.5);
+#open-menu {
+    top:0;
+    left:0;
     z-index:999;
-	cursor: pointer;
+}
+#index {
     position: absolute;
-    border: none;
-    top: 25px;
-    left: 33px;
-	pointer-events:auto;
+    top:0;
+    left:0;
+    height:28px;
+    width:28px;
+    z-index:998;
+    background: #FFF;
+    background-image: url('http://www.archipels.org/atlas/wp-content/themes/html5blank-master/img/IconesMenu/fleche_N.png');
 }
-.block {
-    width: auto;
-    cursor: pointer;
-	box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.5);
-	-moz-box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.5);
-	-webkit-box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.5);
-    display: table;
-    margin: 5px;
-    margin-top : 5px;
-    margin-bottom : 28px;
+.label {
+    background:#fff;
+    height:28px;
+    white-space: nowrap;
+    padding:0 10px;
+    z-index:99;
+    position:relative;
 }
-.plus {
-    width: 28px;
-    height: 28px;
-    color: white;
-    background: black;
-    display: block;
-	float: left;
-    border-right: 1px solid black;
+.button {
+    width:100%;
+    height:100%;
+    display:block;
+	white-space: nowrap;
 }
-.open .plus {
-	background-image:url('img/IconesMenu/fleche_N.png');
+.button a {
+	border: 0;
+	text-decoration:none;
 }
-.close .plus {
-	background-image:url('img/IconesMenu/plus_B.png');
+.list {
+    margin:0;
+    position:absolute;
+    left:100%;
+    top:0;
+    list-style-type:none;
+    background:#fff;
+    padding:0 10px;
+    z-index:9;
+    display:none;
 }
-.displayTitle {
-    display: block;
-    padding: 7px 10px 5px 10px;
-    vertical-align: middle;
-    background: white;
-	float:left;
-	height: 28px;
+#open-tables {
+    z-index:99;
+    top:0;
+    left:100%;
+    display:none;
 }
-.title {
-    display: block;
-    padding: 7px 10px 5px 10px;
-    vertical-align: middle;
-    background: white;
-    height: 28px;
-	float: left;
+li.active {
+    color:#999;
 }
-.titleBlock {
-	margin-left: 13px;
+#menu .button {
+    cursor:pointer;
 }
-.subMenu {
-    display: none;
-}
-#list {
-    list-style: none;
-    padding: 0px;
-    margin: 0px;
-    cursor: pointer;
-    display: inline-block !important;
-    position: absolute;
-    background: white;
+#menu .button:hover {
+    color:blue;
 }
 
-#listWarp {
-    display: none;
+/* POSITIONS DES MODULES */
+.module { left : 0; }
+.module-atlas{ top: 0; }
+.module-table{ top: 50px; }
+#menu.close #open-menu {
+    opacity: 1;
 }
-.line {
-    height: 28px;
-    width: auto;
-    line-height: 28px;
-    padding:0px 10px 0px 10px;
+#menu.open #open-menu {
+    opacity: 0;
 }
-.line:hover {
-    color: #fff;
-    text-decoration: none;
+#menu.close .module {
+    opacity:0;
+    top: 0;
 }
-.line>a {
-	text-decoration: none;
-	border-bottom: none;
+#menu.open .module-table {
+    opacity: 1;
 }
-.title:hover {
-    color: #000;
-    background: white;
+#menu.close .module-table {
+    opacity: 0;
 }
-#tableHead {
-    margin-bottom: 10px;
+#menu.open .module.close #open-tables {
+    display:block;
 }
-.highlight {
-    background: blue !important;
-    color: #fff;
+#menu.open .module.open #open-tables {
+    display:none;
 }
-.inline {
-    display : inline-block;
+#menu.open .module.close .list {
+    display:none;
+}
+#menu.open .module.open .list {
+    display:block;
+}
+#menu.close .current-name {
+    display:inline-block;
+}
+#menu.open .current-name {
+    display:none;
+}
+#menu .module.current {
+    opacity:1;
+}
+
+/* POSITIONS DE L'INDEX */
+#menu[data-page=table].open #index {
+    top:50px;
+}
+#menu[data-page=table] .module-table {
+    left:28px;
+}
+#menu[data-page=atlas].open #index {
+    top:0;
+}
+#menu[data-page=atlas] .module-atlas {
+    left:28px;
+}
+#menu.close #index {
+    top:0;
+}
+
+/* COMMONS */
+#index, .label, .list {
+    box-shadow:0px 0px 10px #999;
+}
+.module, #index, #open-tables, .list {
+    transition-property: all;
+    transition-duration: .2s;
+    position: absolute;
 }
 
 
@@ -497,6 +522,15 @@ p {
 	cursor : -moz-grabbing;
 	cursor : -webkit-grabbing;
 }
+#table.ui-draggable-disabled, #table .ui-draggable-disabled{
+	opacity : 1;
+}
+#table.ui-draggable-disabled .ui-selectee{
+	opacity : .35;
+}
+#table.ui-draggable-disabled .ui-selected{
+	opacity : 1;
+}
 #ecran {
 	position:fixed;
 	top:0;
@@ -535,14 +569,10 @@ p {
 	padding: 0;
 	width: 500px;
 }
-#table svg.ligne{
-	z-index: 0;
-}
 #table .note{
 	cursor:move;
 	padding-top:15px;
 	overflow:hidden;
-	z-index: 1;
 }
 #table .note textarea{
 	padding: 10px;
@@ -586,6 +616,21 @@ p {
 .ombre-4 {
 	box-shadow: 8px 8px 20px RGBA(0,0,0,0.6);
 	z-index:4;
+}
+.lvl-0 {
+	z-index:0 !important;
+}
+.lvl-1 {
+	z-index:1 !important;
+}
+.lvl-2 {
+	z-index:2 !important;
+}
+.lvl-3 {
+	z-index:3 !important;
+}
+.lvl-4 {
+	z-index:4 !important;
 }
 .element img {
 	width:100%;
@@ -662,6 +707,37 @@ p {
 /*------------------------------------*\
     OUTILS et MENUS
 \*------------------------------------*/
+
+/*------- ZOOM -------------------------*/
+#zoomButtons {
+	position:fixed;
+	bottom:20px;
+	right:40px;
+	width:30px;
+	height:60px;
+	box-shadow:0 0 10px rgba(0,0,0,.2);
+	border: 1px solid #aaa;
+	background:#fff;
+}
+#zoomPlus, #zoomMoins {
+	width:28px;
+	height:28px;
+	border:0;
+	position:absolute;
+	text-indent:99999999px;
+	cursor:pointer;
+}
+#zoomPlus {
+	top:0;
+	left:0;
+	border-bottom:1px solid #aaa;
+	background-image: url('http://www.archipels.org/atlas/wp-content/themes/html5blank-master/img/IconesMenu/plus_N.png');
+}
+#zoomMoins {
+	bottom:0;
+	left:0;
+	background-image: url('http://www.archipels.org/atlas/wp-content/themes/html5blank-master/img/IconesMenu/moins_N.png');
+}
 
 /*----Panneau-------------------------*/
 #interface{

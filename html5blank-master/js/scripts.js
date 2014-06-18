@@ -1,8 +1,8 @@
-if (typeof console != "object") {
+/*if (typeof console != "object") {
 	var console = {
 		'log':function(){}
 	};
-}
+}*/
 function afficherPanneau(objet, ID){
 	if (objet== 'element'){
 		$("#interface .modifier").show().attr({href: admin_url + "post.php?post="+ID+"&action=edit", title : "Modifier l'élément" });
@@ -381,180 +381,67 @@ $(function() {
 	/*------------------------------------------------------------------------------------------------------------*\
 				MENU
 	\*------------------------------------------------------------------------------------------------------------*/
-var $this, $thisButton, $thisTitle = $(".titleBlock:eq(0)"), $thisLine, itemName, menu;
-
-var baseMov = 25,
-    vertMov = 56,
-    ratio = 0,
-    numero = '*[data-num="' + ratio + '"]';
-
-// when the display button is clicked :
-$("#display.button").on('click', function (event) {
-    $thisButton = $(this);
-    menu = $("#menu .subMenu");
-    if ($('*[data-num="' + ratio + '"]').hasClass("level1")) {
-        if ($(this).hasClass("close")) { //open the button
-            $('*[data-num="' + ratio + '"]').css("opacity", 0);
-            animateDown();
-            open();
-        } else if ($(this).hasClass("open")) { //close the button
-            $('*[data-num="' + ratio + '"]').css("opacity", 1);
-            animateUp();
-            $(".displayTitle").show();
-            close();
-        }
-    } else {
-        if ($(this).hasClass("close")) { //open the button
-            animateDown();
-            open();
-            setTimeout(function () {
-                $(".displayTitle").hide();
-            }, 200);
-        } else if ($(this).hasClass("open")) { //close the button
-            $('*[data-num="' + ratio + '"]').css("opacity", 1);
-            animateUp();
-            $(".displayTitle").show();
-            close();
-        }
-    }
+// Type de page : table ou atlas
+var currentPage = $('#menu').attr('data-page');
+// Si c'est une table son ID
+var currentID = $('#menu').attr('data-id');
+function init(){
+    // Ajoute une class 'current' sur le module-table ou le module-atlas
+    $('.module').removeClass('current');
+    $('.module-'+currentPage).addClass('current');
+    // Ferme tous les menus et sous-menus
+    $('#menu, .module').removeClass('open').addClass('close');
+    // Ajoute une class 'active' au nom de la table visualisé actuellement
+    $('li').removeClass('active');
+    $('li[data-id='+currentID+']').addClass('active');
+    // Pour chaque sous-menu (il n'y en a qu'un actuellement, les tables)
+    $('.list').each(function(){
+        // currentName = div où s'affiche le nom de la table
+        var currentName = $(this).siblings('.label').children('.current-name');
+        // récupère le nom de la table actuelle
+        var tableName = $('.module-'+currentPage+' li[data-id="'+currentID+'"]').html();
+        // copie le nom de la table dans currentName
+        if (tableName) { currentName.html( ": " + tableName  ); }
+        // place le nom de la table actuel en tête de la liste
+        $(this).children('li[data-id="'+currentID+'"]').prependTo( $(this) );
+    });
+}
+$(document).on('click', '.current-name a', function(e) { e.preventDefault(); afficherPanneau( 'table', table_id); });
+init();
+$('#open-menu').click(function(){
+    // change simplement la class du #menu, toute l'animation se fait en CSS
+    $('#menu').removeClass('close').addClass('open');
 });
-
-$(".titleBlock.level1").on('click', function (event) {
-    shiftLeft();
-    $thisTitle = $(this);
-    shiftRight();
-    $thisButton = $(".titleBlock.level2");
-    menu = $(".titleBlock.level2").find("#listWarp");
-    close();
-    $thisButton = $("#display");
-    menu = $("#menu").children();
-    $('*[data-num="' + ratio + '"]').css("opacity", 1);
-    ratio = $(this).attr("data-num");
-    $(".displayTitle").hide();
-    animateDown();
-    itemName = $(this).find(".title").text();
-    setTimeout(function () {
-        display();
-        $(".displayTitle").show();
-        close();
-        setTimeout(function () {
-            animateUp();
-        }, 300);
-    }, 300);
+$('#open-tables').click(function(){
+    // change la class du .module, anim du sous-menu en CSS
+    $(this).parent('.module').removeClass('close').addClass('open');
+    // passe la page actuelle à 'table' : déplace l'index (>) en face de module-table grâce au CSS
+    $('#menu').attr('data-page', 'table');
 });
-
-$(".titleBlock.level2").on('click', function (event) {
-	if ( ratio != $(this).attr("data-num") ){
-		shiftLeft();
-		$thisTitle = $(this);
-		shiftRight();
-    }
-	$(".displayTitle").hide();
-	$('*[data-num="' + ratio + '"]').css("opacity", 1);
-	ratio = $(this).attr("data-num");
-	animateDown();
-	$thisButton = $(this);
-	menu = $(this).find("#listWarp");
-	if ($(this).hasClass("close")) {
-		open();
-	} else {
-		close();
-	}
+// Si clic hors du #menu, on referme
+$(document).click(function(event) { 
+    if(!$(event.target).closest('#menu').length) {
+        close_menu()
+    }        
 });
-
-
-$(".line").on('click', function (event) {
-    event.stopPropagation()
-    $thisLine = $(this).text();
-    $thisButton = $("#display");
-    menu = $("#menu").children();
-    close();
-    animateDown();
-    highlighter = $(this);
-    highlight();
-    itemName = "Table : "+$thisLine ;//'Table <div class="plus open"></div>' + $thisLine + $(this).text();
-    display();
-    $(".displayTitle").show();
-    setTimeout(function () {
-        animateUp();
-    }, 300);
+// Au clic d'un des .button du menu
+$('#menu .button').click(function(){
+    // les paramètre type de page et ID sont dans les data- des .buttons
+    var id = $(this).attr('data-id');
+    var page = $(this).attr('data-page');
+    // On change la page et son ID 
+    currentPage = page;
+    currentID = id;
+    // On referme
+    close_menu();
+    // On remet la machine à zéro avec les nouvelles valeurs page/id
+    init();
 });
-
-
-
-
-
-
-
-
-
-
-function open() {
-    $thisButton.removeClass("close").addClass("open");
-    plusOpen();
-    setTimeout(function () {
-        menu.show().fadeTo(300, 1);
-    }, 200);
+function close_menu(){
+    $('#menu, .module').removeClass('open').addClass('close');
+    $('#menu').attr('data-page', currentPage);    
+    $('#menu').attr('data-id', currentID);
 }
-
-function close() {
-    $thisButton.removeClass("open").addClass("close");
-    plusClose();
-    menu.fadeTo(300, 0).hide();
-}
-
-function plusOpen() {
-    $thisButton.find(".plus").animate({
-        color: "#000",
-        backgroundColor: "#fff"
-    }, 200);
-}
-
-function plusClose() {
-    $thisButton.find(".plus").animate({
-        color: "#fff",
-        backgroundColor: "#000"
-    }, 200);
-}
-
-function shiftRight() {
-    $thisTitle.animate({
-        "margin-left": "41"
-    }, 100);
-}
-
-function shiftLeft() {
-    $thisTitle.delay(80).animate({
-        "margin-left": "12"
-    }, 100);
-}
-
-
-function survol() {
-
-}
-function display() {
-    $("#display").find(".displayTitle").html(itemName);
-}
-
-function highlight() {
-    $(".highlight").removeClass("highlight");
-    highlighter.addClass("highlight");
-}
-
-function animateDown() {
-    $thisButton.animate({
-        "top": baseMov + (vertMov * ratio)
-    }, 200);
-}
-
-function animateUp() {
-    $thisButton.animate({
-        "top": baseMov
-    }, 200);
-}
-
-//$(".line").click();
 
 	
 	/*------------------------------------------------------------------------------------------------------------*\
@@ -675,6 +562,43 @@ function animateUp() {
 								$(this).children('path').css("marker-end", "url(#arrow)");
 							}
 							enregistrer()
+						} /*else if (key == 'deplacer'){
+							var $this = $(this);
+							$(document).on('mousemove', function(e){
+								var xmove = e.pageX - ox;
+								var ymove = e.pageY - oy;
+								var xmove = Math.round(xmove / echelle);
+								var ymove = Math.round(ymove / echelle);
+								var left = $this.css('left') + xmove;
+								var top = $this.css('top') + ymove;
+								$this.css({
+								   left:  left,
+								   top:   top
+								});
+								var ox = e.pageX;
+								var oy = e.pageY;
+							});
+						} */else if ( key == '0' || key == '1' ||key == '2' ||key == '3' ||key == '4' ) {
+							$(this).removeClass('lvl-0');
+							$(this).removeClass('lvl-1');
+							$(this).removeClass('lvl-2');
+							$(this).removeClass('lvl-3');
+							$(this).removeClass('lvl-4');
+							$(this).addClass('lvl-'+key);
+							// removeClass
+							$(this).attr('class', function(index, classNames) {
+								classNames = classNames.replace('lvl-0', '');
+								classNames = classNames.replace('lvl-1', '');
+								classNames = classNames.replace('lvl-2', '');
+								classNames = classNames.replace('lvl-3', '');
+								return classNames.replace('lvl-4', '');
+							});
+							// addClass
+							$(this).attr('class', function(index, classNames) {
+								return classNames + ' lvl-' + key;
+							});
+							console.log('lvl-'+key);
+							enregistrer();
 						} else if ( key.substring(0,7) == 'couleur'){
 							var couleur = new Array();
 							couleur['couleur0'] = "#000";
@@ -688,11 +612,18 @@ function animateUp() {
 							$(this).children('path').css("stroke", couleur[key] );
 							$(this).find('marker polyline').attr("fill", couleur[key] );
 							enregistrer()
-						}
+						} else if ( key.substring(0,9) == 'epaisseur'){
+							var epaisseur = new Array();
+							epaisseur['epaisseur0'] = 1;
+							epaisseur['epaisseur1'] = 4;
+							$(this).children('path').css("stroke-width", epaisseur[key] );
+							enregistrer()
+						} 
 					},
 					items: {
 						"fleche": {name: "Ligne/Flèche"},
 						"supprimer": {name: "Supprimer", icon: "delete"},
+						"deplacer": {name: "Déplacer"},
 						"fold1" : {
 							"name": "Couleur",
 							"items" : {
@@ -706,6 +637,23 @@ function animateUp() {
 								"couleur7": {name: "Bleu"},
 							}
 						},
+						"fold2" : {
+							"name": "Calque",
+							"items" : {
+								"4": {name: "/////"},
+								"3": {name: "////"},
+								"2": {name: "///"},
+								"1": {name: "//"},
+								"0": {name: "/"},
+							}
+						},
+						"fold3" : {
+							"name": "Épaisseur",
+							"items" : {
+								"epaisseur0": {name: "maigre"},
+								"epaisseur1": {name: "gras"},
+							}
+						}
 					}
 				});
 				$.contextMenu({
@@ -725,6 +673,14 @@ function animateUp() {
 							couleur['couleur6'] = "#9CBDF8";
 							$(this).children('textarea').css("background-color", couleur[key] );
 							enregistrer()
+						} else if ( key == '0' || key == '1' ||key == '2' ||key == '3' ||key == '4' ) {
+							$(this).removeClass('lvl-0');
+							$(this).removeClass('lvl-1');
+							$(this).removeClass('lvl-2');
+							$(this).removeClass('lvl-3');
+							$(this).removeClass('lvl-4');
+							$(this).addClass('lvl-'+key);
+							enregistrer();
 						}
 					},
 					items: {
@@ -741,6 +697,16 @@ function animateUp() {
 								"couleur6": {name: "Bleu"},
 							}
 						},
+						"fold2" : {
+							"name": "Calque",
+							"items" : {
+								"4": {name: "/////"},
+								"3": {name: "////"},
+								"2": {name: "///"},
+								"1": {name: "//"},
+								"0": {name: "/"},
+							}
+						}
 					}
 				});
 			}
@@ -788,6 +754,7 @@ function animateUp() {
 						top 		: parseInt( $(this).css('top')													),
 						height 		: parseInt( $(this).css('height')												),
 						width 		: parseInt( $(this).css('width')												),
+						zindex		: parseInt( $(this).css('z-index')												),
 						couleur		: $(this).children('textarea').css('background')								,
 						val 		: $(this).children('textarea').val()
 					});
@@ -800,6 +767,8 @@ function animateUp() {
 						top 		: parseInt( $(this).css('top')													),
 						height 		: parseInt( $(this).css('height')												),
 						width 		: parseInt( $(this).css('width')												),
+						zindex		: parseInt( $(this).css('z-index')												),
+						epaisseur	: $(this).children('path').css('stroke-width')									,
 						pathString 	: $(this).children('path').attr('d')											,
 						couleur 	: $(this).children('path').css('stroke')
 					});
@@ -879,8 +848,8 @@ function animateUp() {
 		});
 		// Zoom de la table
 		//Math.pow(echelle * coef, 1.8)
+		var zoomer = echelle * .2;
 		$("#ecran").mousewheel(function(event, delta) {
-			var zoomer = echelle * .2;
 			if(delta > 0) {
 				var offset = $('#table').offset();
 				var pDist = (event.pageX - offset.left);
@@ -911,6 +880,28 @@ function animateUp() {
 				zoom(echelle, dif, difY);
 			}
 		});
+		$('#zoomPlus').click(function(e) {
+			zoomby(6)
+			e.preventDefault();
+		});
+		$('#zoomMoins').click(function(e) {
+			zoomby(-6)
+			e.preventDefault();
+		});
+		function zoomby(coef) {
+			var offset = $('#table').offset();
+			var pDist = ( ($(document).width()/2) - offset.left);
+			var pDistY = ( ($(document).height()/2) - offset.top);
+			var pDistReel = pDist*(1/echelle);
+			var pDistYReel = pDistY * (1/echelle);
+			echelle = echelle + ( zoomer * coef );
+			if (echelle>4){ echelle=4; } else if (echelle<.01){ echelle=.01; }
+			var nDist = pDistReel * echelle;
+			var nDistY = pDistYReel * echelle;
+			var dif = pDist - nDist ;
+			var difY = pDistY - nDistY ;
+			zoom(echelle, dif, difY);
+		}
 		function zoom(echelle, dif, difY){
 			$('#table').css({ 
 				transformOrigin: 'top left',
@@ -952,6 +943,22 @@ function animateUp() {
 			}
 		});
 		
+		// Init Line
+		function initLine(){
+			if ( have_modification_right() ) {
+				$('.ligne').draggable({ scroll:false, cursor:"move",	
+					drag: function(evt,ui){
+						// zoom fix
+						ui.position.top = Math.round(ui.position.top / echelle);
+						ui.position.left = Math.round(ui.position.left / echelle);
+					},
+					stop: function(){
+						enregistrer();
+					}
+				});
+			}
+		}
+		initLine();
 		
 		// Init notes
 		function initNote(){
@@ -1004,14 +1011,38 @@ function animateUp() {
 		function initElement(element){
 			if ( have_modification_right() ) {
 				// Drag des éléments
+				var selected = $([]), offset = {top:0, left:0}; 
 				$(element).draggable({ 
 					scroll:false,
 					cursor:"move",
+					start: function(ev, ui) {
+						if ($(this).hasClass("ui-selected")){
+							selected = $(".ui-selected").each(function() {
+							   var el = $(this);
+							   el.data("offset", el.position()  );
+							});
+						}
+						else {
+							selected = $([]);
+							$(".element").removeClass("ui-selected");
+						}
+					},
 					drag: function(evt,ui)
 						{
 							// zoom fix
 							ui.position.top = Math.round(ui.position.top / echelle);
 							ui.position.left = Math.round(ui.position.left / echelle);
+							
+							var dt = ui.position.top - ui.originalPosition.top/echelle, dl = ui.position.left - ui.originalPosition.left/echelle;
+					
+							// take all the elements that are selected expect $("this"), which is the element being dragged and loop through each.
+							selected.not(this).each(function() {
+								 // create the variable for we don't need to keep calling $("this")
+								 // el = current element we are on
+								 // off = what position was this element at when it was selected, before drag
+								var el = $(this), off = { top: parseFloat( el.data("offset").top )/echelle, left: parseFloat( el.data("offset").left )/echelle } ;
+								el.css({top: off.top + dt  , left: off.left + dl   });
+							});
 						},
 					stop: function(){
 						enregistrer();
@@ -1294,7 +1325,7 @@ function animateUp() {
 				
 				var pathString = 'M'+( points[0]['x'] - Xmin )+','+( points[0]['y']  - Ymin )+' Q'+( points[1]['x'] - Xmin )+','+( points[1]['y'] - Ymin )+' '+( points[2]['x'] - Xmin )+','+( points[2]['y'] - Ymin);
 				var svg  = '<svg xmlns="http://www.w3.org/2000/svg" version="1.1" class="ligne" style="position:absolute;width:'+( (Xmax-Xmin) + 2*marge)+'px;height:'+( (Ymax-Ymin) + 2*marge)+'px;left:'+(Xmin)+'px;top:'+(Ymin)+'px;">';
-				svg		+=  '<defs><marker id="arrow" viewBox="0 0 10 10" refX="1" refY="5" markerUnits="userSpaceOnUse" orient="auto" markerWidth="8" markerHeight="8" ><polyline points="0,0 10,5 0,10 1,5" fill="context-stroke" /></marker></defs>';
+				svg		+=  '<defs><marker id="arrow" viewBox="0 0 10 10" refX="1" refY="5" markerUnits="strokeWidth" orient="auto" markerWidth="8" markerHeight="8" ><polyline points="0,0 10,5 0,10 1,5" fill="context-stroke" /></marker></defs>';
 				svg 	+= '<path d="'+pathString+'" style="stroke: #000; fill:none;" marker-end="url(#arrow)"/>';
 				svg 	+= '</svg>';
 				$('#centre').prepend(svg);
@@ -1376,6 +1407,42 @@ function animateUp() {
 		};
 		*/
 		
+		$( ".ligne, .note, .element" ).draggable( "disable" );
+		$( "#table" ).selectable({ filter: ".ligne, .note, .element" });
+	
+		// manually trigger the "select" of clicked elements
+		$( ".element" ).click( function(e){
+			if (e.metaKey == false) {
+				// if command key is pressed don't deselect existing elements
+				$( ".elementSymbole" ).removeClass("ui-selected");
+				$(this).addClass("ui-selecting");
+			}
+			else {
+				if ($(this).hasClass("ui-selected")) {
+					// remove selected class from element if already selected
+					$(this).removeClass("ui-selected");
+				}
+				else {
+					// add selecting class if not
+					$(this).addClass("ui-selecting");
+				}
+			}
+			
+			$( "#table" ).data("selectable")._mouseStop(null);
+		});
+		$(document).keydown(function(e) {
+			if(e.shiftKey && !$("#table").draggable("option", "disabled") ) {
+				$( "#table" ).draggable( "disable" );
+				$( ".element" ).draggable( "enable" );
+			}
+		});
+		$(document).keyup(function(e) {
+			if( $("#table").draggable("option", "disabled") ) {
+				$( "#table" ).draggable( "enable" );
+				$( ".element" ).draggable( "disable" );
+			}
+		});
+		
 	}
 	/*	end if single-table		*/
 	
@@ -1405,7 +1472,6 @@ function animateUp() {
 				$( "#atlas" ).draggable( "disable" );
 				$( ".elementSymbole" ).draggable( "enable" );
 			}
-			
 		});
 		$(document).keyup(function(e) {
 			if( $("#atlas").draggable("option", "disabled") ) {
@@ -1515,10 +1581,6 @@ function animateUp() {
 						selected = $([]);
 						$(".elementSymbole").removeClass("ui-selected");
 					}
-					// zoom fix
-					//ui.position.top = Math.round(ui.position.top / echelle);
-					//ui.position.left = Math.round(ui.position.left / echelle);
-					//ui.originalposition = {top: ui.position.top, left: ui.position.left};
 				},
 				drag: function(ev, ui) {
 					// zoom fix

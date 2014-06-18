@@ -1,27 +1,23 @@
 <div id="interface" class="agrandit">
-<div id="menuwrap">
-<?php if ( is_user_logged_in() || $maintenance == false ) { ?>
-	<div id="display" class="button close">
-		<div class="plus"></div><span class="displayTitle"><a href="http://www.archipels.org/atlas/">Atlas</a></span>
-	</div>
-	<div id="menu">
-		<div class="subMenu">
-			<div id="menu_atlas" class="titleBlock block level1" data-num="0">
-				<div class="title level1"><a href="http://www.archipels.org/atlas/">Atlas</a></div>
+	<div id="menuwrap">
+	<?php if ( is_user_logged_in() || $maintenance == false ) { ?>
+		<?php if ( is_page('atlas') ) { $page = 'atlas'; } else { $page='table'; } ?>
+		<div id="menu" data-page="<?php echo $page; ?>" data-id="<?php the_ID(); ?>" >
+			<div id="open-menu" class="open-button"></div>
+			<div id="index"></div>
+			<div class="module module-atlas">
+				<div class="label button" data-page="atlas"><a href="/atlas">Atlas</a></div>
 			</div>
-			<div id="menu_tables" class="titleBlock block level2 close" data-num="1">
-				<div class="title button level2">Table</div>
-				<div class="plus button level2"></div>
-				<div id="list" class="subMenu block inline">
-					<div id="listWarp">
-						<?php echo tableList(); ?>
-					</div>
-				</div>
+			<div class="module module-table">    
+				<div class="label">Table <span class="current-name"></span></div>
+				<div id="open-tables" class="open-button"></div>
+				<ul class="list">
+					<?php echo tableList(); ?>
+				</ul>
 			</div>
 		</div>
+	<?php } ?>
 	</div>
-<?php } ?>
-</div>
 		
 	<div id="panneau" class="agrandit">
 		<div id="close" class="icone">×</div>
@@ -45,4 +41,5 @@
 		</div>
 	</div>
 	<div id="enregistrement"><p class="infos">enregistrement</p></div>
+	<div id="zoomButtons"><div id="zoomPlus">+</div><div id="zoomMoins">-</div></div>
 </div>
