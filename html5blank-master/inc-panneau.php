@@ -1,24 +1,19 @@
-<div id="interface" class="agrandit">
-	<div id="menuwrap">
 	<?php if ( is_user_logged_in() || $maintenance == false ) { ?>
 		<?php if ( is_page('atlas') ) { $page = 'atlas'; } else { $page='table'; } ?>
-		<div id="menu" data-page="<?php echo $page; ?>" data-id="<?php the_ID(); ?>" >
-			<div id="open-menu" class="open-button"></div>
-			<div id="index"></div>
-			<div class="module module-atlas">
-				<div class="label button" data-page="atlas"><a href="/atlas">Atlas</a></div>
-			</div>
-			<div class="module module-table">    
-				<div class="label">Table <span class="current-name"></span></div>
-				<div id="open-tables" class="open-button"></div>
-				<ul class="list">
-					<?php echo tableList(); ?>
-				</ul>
-			</div>
-		</div>
+	<nav id="menu" class="noSelection" data-page="<?php echo $page; ?>" data-id="<?php the_ID(); ?>">
+		<div id="info" class="menubox" title="informations">i</div><!-- 
+	--><div id="atlasButton" class="menubox"><a href="/atlas">Atlas</a><!--
+	--></div><!--
+    --><div id="closeButton" class="menubox close">x</div><!--
+	--><div id="tables" class="menubox close"><!--
+	--><div id="display">Tables</div><div id="tableButton">+</div></div>
+		<ul id="tableList" class="close">
+			<?php echo tableList(); ?>
+		</ul>
+	</nav>
 	<?php } ?>
-	</div>
-		
+<div id="hoverCall"></div>
+<div id="interface" class="agrandit close">
 	<div id="panneau" class="agrandit">
 		<div id="close" class="icone">×</div>
 		<div id="reduire" class="icone"></div>
@@ -41,5 +36,5 @@
 		</div>
 	</div>
 	<div id="enregistrement"><p class="infos">enregistrement</p></div>
-	<div id="zoomButtons"><div id="zoomPlus">+</div><div id="zoomMoins">-</div></div>
+	<div id="zoomButtons" class="noSelection"><div id="zoomPlus">+</div><div id="zoomMoins">-</div></div>
 </div>

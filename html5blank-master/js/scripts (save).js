@@ -144,7 +144,7 @@ $(function() {
 	});
 	
 	// Fermer le panneau
-	$(document).on( 'click', "#close", function(){ fermerPanneau() } );
+	$(document).on( 'click', "#panneau #close", function(){ fermerPanneau() } );
 	
 	// Agrandire/réduire le panneau
 	$(document).on( 'click', "#reduire", function (e){ 
@@ -154,26 +154,6 @@ $(function() {
 			reduirePanneau();
 		}
 	});
-	$(document).on({
-		mouseenter: function () {
-			$('#interface').css('bottom', 25);
-		},
-		mouseleave: function () {
-			$('#interface').css('bottom', 20);
-		}
-	}, "#interface.agrandit #reduire");
-	var interface_h = 100 ;
-	$(document).on({
-		mouseenter: function () {
-			interface_h = $('#interface').height();
-			$('#interface').height(interface_h+5);
-		},
-		mouseleave: function () {
-			interface_h = $('#interface').height();
-			$('#interface').height(interface_h-5);
-		}
-	}, "#interface.reduit #reduire"); 
-	
 	function fermerPanneau(){
 		//$("#interface .modifier").hide();
 		//$('#panneau').hide();
@@ -182,12 +162,9 @@ $(function() {
 		//$("#ouvrirPanneau").show();
 		replierPanneau2();
 		setCookie('panneau', 0);
-		/*
 		$('#interface').animate({
-			"left": -480
+			"left": -460
 		}, 500);
-		*/
-		closeItem( $('#interface') );
 	}
 	function agrandirPanneau(autofill){			
 		autofill = (typeof autofill === "undefined") ? true : autofill;
@@ -197,8 +174,6 @@ $(function() {
 		$('#interface').removeClass('deploye');
 		$('#interface').addClass('agrandit');
 		$(".nano").nanoScroller(); 
-		$('#interface').css('bottom', 20);
-    	openItem($('#interface, #tables, #closeButton'));
 		setCookie('panneau', 2);
 		if ( $('#panneau .content').children().length == 0 ) {
 			if ( $('body').hasClass('single-table') && autofill) {
@@ -207,13 +182,9 @@ $(function() {
 			
 			}
 		}
-		/*
 		$('#interface').animate({
-			"left": 38
-		}, 500); 
-		*/
-	    openItem( $('#interface') );
-
+			"left": 40
+		}, 500);
 	}
 	function reduirePanneau(){
 		$("#ouvrirPanneau").hide();
@@ -224,8 +195,6 @@ $(function() {
 		$('#enlarge').prependTo('#panneau');
 		$('#panneau2').hide();
 		$('#panneau .pane').remove();
-		var h = $('#interface .en-tete').height() + 25;
-		$('#interface').css('height', h);
 		setCookie('panneau', 1);
 		if ( $('#panneau .content').children().length == 0 ) {
 			if ( $('body').hasClass('single-table') ) {
@@ -234,16 +203,12 @@ $(function() {
 			
 			}
 		}
-		/*
 		$('#interface').animate({
-			"left": 38
+			"left": 40
 		}, 500);
-		*/
-	    openItem( $('#interface') );
 	}
 	function deployerPanneau2(){
-		setTimeout(function(){ $('#panneau2').show() }, 300);
-			
+			$('#panneau2').show();
 			$('#enlarge').html("←");
 			$('#panneau .meta, #interface').addClass('deploye');
 			$('#panneau .texte-element').appendTo('#panneau2 .texte');
@@ -270,24 +235,8 @@ $(function() {
 		} else {
 			replierPanneau2()
 		}
+		
 	});
-	/*
-	$(document).on({
-		mouseenter: function () {
-			$('#interface').width('465px');
-		},
-		mouseleave: function () {
-			$('#interface').width('460px');
-		}
-	}, "#interface:not(.deploye) #enlarge"); 
-	$(document).on({
-		mouseenter: function () {
-			$('#interface').width('1215px');
-		},
-		mouseleave: function () {
-			$('#interface').width('1220px');
-		}
-	}, "#interface.deploye #enlarge"); */
 	
 	// Déplier le panneau dans l'état enregistré
 	if ($('body').hasClass('home') || $('body').hasClass('atlas') ){
@@ -423,7 +372,7 @@ $(function() {
 		$('#menu_table .liste').slideUp(50);
 		$('#menu_table .liste-sequences').slideToggle(50);
 	});
-	$(document).on( 'click', "#tables", function (e){
+	$(document).on( 'click', "#menu_table .arbre .couleur, #menu_table .arbre .nom", function (e){
 		$('#panneau').show();				agrandirPanneau();
 		afficherPanneau( 'table', table_id);
 	});
@@ -432,61 +381,6 @@ $(function() {
 	/*------------------------------------------------------------------------------------------------------------*\
 				MENU
 	\*------------------------------------------------------------------------------------------------------------*/
-	
-
-var currentTable;
-
-$('#tableButton').click(function () {
-    itemToggle( $('#tableList') );
-});
-// hoverCall, pour faire venir le panneau
-$('#hoverCall, #closeButton').click(function () {
-    itemToggle($('#interface, #tables, #closeButton'));
-});
-$('#tableList li').click(function () {
-    newTableID = $(this).attr('data-id');
-    displayTable(newTableID);
-    closeItem($(this).parent());
-});
-/*
-$(document).click(function (event) {
-    if (!$(event.target).closest('#menu').length) {
-		closeItem('ul#tableList.open');
-    }
-}); 
-*/
-function itemToggle(item) {
-    if (item.hasClass('close')) {
-        openItem(item);
-    } else if (item.hasClass('open')) {
-        closeItem(item);
-    }
-}
-function openItem(item) {
-    item.removeClass('close').addClass('open');
-}
-function closeItem(item) {
-    item.removeClass('open').addClass('close');
-}
-
-var currentPage = $('#menu').attr('data-page');
-var currentTableID = $("#menu").attr('data-id');
-displayTable(currentTableID);
-function displayTable(ID) {
-	if (currentPage == "atlas") {
-		$('nav#menu').find('#atlasButton').addClass('currentPage');
-	} else {
-		$('nav#menu').find('#tables').addClass('currentPage');
-		currentTable = $(" li[data-id='"+ID+"'] ");
-		currentTableText = currentTable.text();
-		if (currentTableText.length >= 1) {
-			$('#tables').find('#display').html("Table : " + currentTableText );
-			currentTable.find('div.couleur').clone().appendTo("#display");
-		} 
-	}
-}
-
-	/*
 // Type de page : table ou atlas
 var currentPage = $('#menu').attr('data-page');
 // Si c'est une table son ID
@@ -548,7 +442,7 @@ function close_menu(){
     $('#menu').attr('data-page', currentPage);    
     $('#menu').attr('data-id', currentID);
 }
-*/
+
 	
 	/*------------------------------------------------------------------------------------------------------------*\
 				IF TABLE
@@ -972,11 +866,11 @@ function close_menu(){
 			}
 		});
 		$('#zoomPlus').click(function(e) {
-			zoomby(1)
+			zoomby(6)
 			e.preventDefault();
 		});
 		$('#zoomMoins').click(function(e) {
-			zoomby(-1)
+			zoomby(-6)
 			e.preventDefault();
 		});
 		function zoomby(coef) {
@@ -1932,7 +1826,6 @@ function close_menu(){
 		
 		// Liste
 		$('#show_laliste').change(function(){
-			hide_tools(this);
 			if ( this.checked ) {
 				var liste = $('<div/>');
 				liste.attr('id', 'liste_elements');
@@ -1959,39 +1852,55 @@ function close_menu(){
 				});
 				liste.mouseleave( function() { surligner(0); } );
 				$('body').append(liste);
+			} else {
+				$("#liste_elements").remove();
+				surligner(0);
 			}
 		});
 		
 		
 		// Période
 		$('#show_historique').change(function(){
-			hide_tools(this);
 			if ( this.checked ) {
+				$("#outils input").not(this).prop("checked", false); 
+				$("#map").css("top","-99999px");
+				$("#recherche").hide();
 				$("#historique").show();
 				surligner(0);
 				selection='historique';
+			} else {
+				$("#historique").hide();
+				surligner(0);
 			}
 		});							
 		
 		// Vue géographique
 		$('#show_carte').change(function(){
-			hide_tools(this);
 			if ( this.checked ) {
+				$("#outils input").not(this).prop("checked", false); 
 				$("#recherche").hide();
 				$("#historique").hide();
 				$("#map").css('top',0);
 				surligner(0);
 				selection='carte';
+			} else {
+				$("#map").css("top","-99999px");
+				surligner(0);
 			}
 		});
 		
 		// Formule classification
 		$('#show_classification').change(function(){
-			hide_tools(this);
 			if ( this.checked ) {
+				$("#outils input").not(this).prop("checked", false); 
+				$("#historique").hide();
+				$("#map").css("top","-99999px");
 				$("#recherche").show();
 				surligner(0);
 				selection='classification';
+			} else {
+				$("#recherche").hide();
+				surligner(0);
 			}
 		});
 		
@@ -2010,15 +1919,6 @@ function close_menu(){
 			selection='keyword';
 		});
 		
-		// Hide Tools
-		function hide_tools(exept) {
-			$("#outils input").not(exept).prop("checked", false); 
-			$("#historique").hide();
-			$("#map").css("top","-99999px");
-			$("#liste_elements").remove();
-			$("#recherche").hide();
-			surligner(0);
-		}
 		
 		//désactiver enter=send formulaire de recherche
 		$('#champ-recherche input').keypress(function (e) {

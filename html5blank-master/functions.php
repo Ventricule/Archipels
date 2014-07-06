@@ -266,7 +266,7 @@ function tableList() {
 						}
 						$output .= '' ;
 						foreach($tables as $table){
-							$output .= '<li class="button" data-id="'.$table[id].'" data-page="table"><div class="couleur" id="'.$table[id].'" style="background:'.$table[couleur].'"></div><a href="'.$table[lien].'">'.$table[abrege].'</a></li>';
+							$output .= '<li class="button" data-id="'.$table[id].'" data-page="table"><a href="'.$table[lien].'"><div class="couleur" id="'.$table[id].'" style="background:'.$table[couleur].'"></div>'.$table[abrege].'</a></li>';
 						}
 						// Restore original Post Data
 						wp_reset_postdata();
@@ -281,10 +281,16 @@ function createNote($left, $top, $width, $height, $couleur, $val, $zindex=1){
 }
 function createLigne($left, $top, $width, $height, $couleur, $pathString, $zindex=1, $strokewidth=1){
 	$num = round( rand(0, 9999999) );
-	$svg	 = '<svg xmlns="http://www.w3.org/2000/svg" version="1.1" class="ligne" style="position:absolute;width:'.$width.'px;height:'.$height.'px;left:'.$left.'px;top:'.$top.'px;z-index: ' . $zindex . ';">';
+	$offset = explode(' ', $pathString);
+	$position = str_replace('M', '', $offset[0]);
+	$position = explode(',', $position);
+	$svg	 = "<div class='ligne-wrapper' style='position:absolute;width:${width}px;height:${height}px;left:${left}px;top:${top}px;z-index:${zindex};'>";
+	$svg	.= '<svg xmlns="http://www.w3.org/2000/svg" version="1.1" class="ligne" style="position:absolute;left:0;top:0;" >';
 	$svg	.=  '<defs><marker id="arrow'.$num.'" viewBox="0 0 40 40" refX="30" refY="20" markerUnits="strokeWidth" orient="auto" markerWidth="7" markerHeight="7"><polyline points="3,2 40,20 3,38 0,32 28,20 0,8" fill="'.$couleur.'" /></marker></defs>';
 	$svg 	.= '<path d="'.$pathString.'" style="stroke: '.$couleur.'; fill:none; stroke-width: '.$strokewidth.'" marker-end="url(#arrow'.$num.')"/>';
 	$svg 	.= '</svg>';
+	$svg 	.= "<div class='ligne-handler' style='top:${position[1]}px;left:${position[0]}px;margin: -7px;border-color:${couleur};'></div>";
+	$svg 	.= '</div>';
 	return $svg ;
 }
 // Fabrique de miniature de table

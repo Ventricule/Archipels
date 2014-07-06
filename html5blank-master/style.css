@@ -50,6 +50,11 @@ body {
 	font-family: 'f_grotesk', sans-serif;
 	font-size:12px;
 	line-height:15px;
+	-webkit-animation: bugfix infinite 1s; /* fausse animation pour android (bugfix) */
+}
+@-webkit-keyframes bugfix { 
+  from {padding:0;} 
+  to {padding:0;} 
 }
 /* clear */
 .clear:before,
@@ -75,10 +80,73 @@ a{
 	text-decoration: none;
 	border-bottom: 1px solid;
 }
-label {
- padding-left:5px;
-  z-index:10;
+.noSelection {
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
 }
+label {
+	z-index:10;
+	background: white;
+	width: 35px;
+	height: 35px;
+	float: left;
+	margin-right: 1px;
+	text-align: center;
+	vertical-align: middle;
+	line-height: 24px;
+	cursor: pointer;
+	user-select: none;
+}
+#boutons>input[type=checkbox] {
+   position: absolute !important;
+   top: -9999px;
+   left: -9999px;
+}
+#boutons>input[type=checkbox]:checked + label {
+   background: #fdd;
+   box-shadow: 0 0 15px #fff inset;
+   -moz-box-shadow: 0 0 15px #fff inset;
+   -webkit-box-shadow: 0 0 15px #fff inset;
+}
+#boutons>label:last-child {
+	margin-right: 0px !important;
+}
+#boutons {
+	position: fixed;
+	top: 20px;
+	right: 150px; 
+	height: 35px;
+    background: rgba(0, 0, 0, 0.5);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+	-moz-box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+	-webkit-box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+}
+/*
+.atlas #outils .bouton_classification{
+	position: relative;
+	top: 5px;
+	left: 517px;
+}
+.atlas #outils .bouton_periode{
+	position: fixed;
+	top: 5px;
+	left: 617px;
+}
+.atlas #outils .bouton_geographie{
+	position: fixed;
+	top: 5px;
+	left: 717px;
+}
+.atlas #outils .bouton_laliste{
+	position: fixed;
+	top: 5px;
+	left: 817px;
+}
+*/
 input[type="checkbox"], input[type="radio"] {
 	margin-right: 5px;
 	position: relative;
@@ -160,7 +228,183 @@ p {
     MENU
 \*------------------------------------*/
 
+nav#menu, #champ-recherche input {
+    font-family: 'notcouriersansregular', monospace;
+    font-weight: 100;
+    font-size: 21px;
+    text-decoration: none;
+    line-height:35px;
+    word-spacing: -6px;
+    letter-spacing: -.01em;
+}
+
+nav#menu {
+    display: inline-block;
+    position: absolute;
+    color: black;
+    cursor: pointer;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+	-moz-box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+	-webkit-box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+    background: rgba(0, 0, 0, 0.35);
+    width: 460px;
+    top: 20px;
+    left: 38px;
+}
+.menubox {
+    display: inline-block;
+    background: #fff;
+    height: 35px;
+    vertical-align: top;
+    margin-right: 1px;
+    z-index: 200;
+    position: relative;
+}
+#tableList {
+    position: absolute;
+    margin: 0px;
+    z-index: 100;
+    left: 127px;
+    border-top: 1px dashed #fff !important;
+    padding: 0px;
+}
+#tableList li {
+    background: #fff;
+}
+#tableList li:hover, .menubox:hover {
+   background: #FAFAFA;
+} 
+#tableList li a {
+    color: black;
+	border: none;
+	display: block;
+}
+#info, #closeButton {
+    min-width: 35px;
+    text-align: center;
+}
+#closeButton {
+    margin-right: 0px !important;
+    position: absolute;
+    right: 0px;
+    line-height: 32px;
+}
+#closeButton.close { 
+    height: 35px;
+    color: #fff;
+}
+#closeButton.open { 
+    height: 36px;
+    color: #222;
+    border-bottom: 1px dashed #888 !important;
+}
+#closeButton.open {
+    transition-property: all;
+    transition-duration: .1s;
+    transition-delay: .2s;
+}
+#interface.close, #tables.open, #tableList.open {
+    transition-property: all;
+    transition-duration: .2s;
+    transition-delay: .1s;
+}
+#interface.open, #tables.close, #tableList.close {
+    transition-property: all;
+    transition-duration: .2s;
+    transition-delay: 0s;
+}
+#atlasButton {
+    width: 90px;
+    text-align: center;
+    text-decoration: none;
+}
+#atlasButton a {
+    color: black;
+    text-decoration: none;
+    border-bottom: none;
+}
+#tables {
+    padding-left: 10px;
+}
+#tables.close {
+    width: 333px; 
+    margin-right: 0px !important;
+}
+#tables.open {
+    width: 297px; 
+    margin-right: 1px !important;
+}
+.couleur {
+    height: 13px;
+    width: 13px;
+    display: inline-block;
+    border: 1px solid white;
+    outline: 1px solid black;
+    margin-right: 10px;
+    margin-left: 10px;
+}
+#tableList.close {
+    opacity: 0;
+    display: none;
+}
+#tables:hover+#tableList, #tableList:hover, #tableList.open {
+    opacity: 1;
+    display: block;
+}
+#tables.close+#tableList {
+    left: 127px;
+    width: 333px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+#tables.open+#tableList {
+    left: 126px;
+    width: 299px;
+    box-shadow: none;
+    border: 1px solid rgba(0,0,0,.6);
+}
+#tableButton {
+    height: 35px;
+    width: 35px;
+    text-align: center;
+    display: inline-block;
+    float: right;
+    content: "+";
+}
+#display { display: inline-block}
+
+#interface.open {
+    left: 38px; 
+}
+#interface.close {
+    left: -480px;
+}
+
+#hoverCall {
+    background: none;
+    position: absolute;
+    height: auto;
+    bottom: 10px;
+    top: 80px;
+    width: 35px;
+    left: 0px;
+    z-index: 150;
+    cursor: pointer;
+}
+#hoverCall:hover+#interface.close {
+    left: -423px !important;    
+}
+
+#hoverCall:hover+#interface.open {
+    left: 20px !important;     
+}
+.currentPage { 
+
+}
+
+
+
 /* ASPECT */
+/*
 #menu {
     position:absolute;
     top:0;
@@ -237,8 +481,9 @@ li.active {
 #menu .button:hover {
     color:blue;
 }
-
+*/
 /* POSITIONS DES MODULES */
+/*
 .module { left : 0; }
 .module-atlas{ top: 0; }
 .module-table{ top: 50px; }
@@ -279,8 +524,9 @@ li.active {
 #menu .module.current {
     opacity:1;
 }
-
+*/
 /* POSITIONS DE L'INDEX */
+/*
 #menu[data-page=table].open #index {
     top:50px;
 }
@@ -296,8 +542,9 @@ li.active {
 #menu.close #index {
     top:0;
 }
-
+*/
 /* COMMONS */
+/*
 #index, .label, .list {
     box-shadow:0px 0px 10px #999;
 }
@@ -307,7 +554,7 @@ li.active {
     position: absolute;
 }
 
-
+*/
 /*------------------------------------*\
     STRUCTURE
 \*------------------------------------*/
@@ -345,14 +592,16 @@ li.active {
 
 #liste_elements {
 	position: fixed;
-	top: 35px;
-	left: 530px;
-	right: 35px;
-	bottom: 35px;
+	top: 56px;
+	left: 533px;
+	right: 40px;
+	height: 89%;
 	overflow-y: scroll;
 	z-index: 9999;
-	background: #ddd;
-	box-shadow: 1px 1px 18px;
+	background: rgba(255, 255, 255, .78);
+	-webkit-box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.5);
+	-moz-box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.5);
+	box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.5);
 	padding:5px;
 }
 #liste_elements>div {
@@ -440,9 +689,10 @@ li.active {
 }
 
 #jquery-live-search {
-	background: #fff;
+	background: rgba(255, 255, 255, 0.7);
 
-	width:140px !important;
+	width:220px !important;
+	top: 56px !important;
 	padding: 10px 10px 3px 10px;
 	max-height: 500px;
 	overflow: auto;
@@ -450,22 +700,26 @@ li.active {
 	position: absolute;
 	z-index: 99;
 
-	border: 1px solid #fff;
+/*	border: 1px solid #fff;
 	border-width: 0 1px 1px 1px;
 
-	-webkit-box-shadow: -10px 13px 13px rgba(0, 0, 0, 0.2);
-	-moz-box-shadow: -10px 13px 13px rgba(0, 0, 0, 0.2);
-	box-shadow: -10px 13px 13px rgba(0, 0, 0, 0.2);
+	-webkit-box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.5);
+	-moz-box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.5);
+	box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.5);
+	*/
 }
 #champ-recherche {
-	position: fixed;
-	top: 5px;
-	right: 35px;
+	display: inline-block;
+	top: 20px;
+	right: 132px;
+	z-index: 100;
 }
 #champ-recherche input{
-	border:1px solid black;
 	/*background:#ddd;*/
-	padding: 0px 5px;
+	padding: 0px 10px;
+	border: none;
+	height: 35px;
+	width: 200px;
 }
 #champ-recherche button{
 	display:none;
@@ -569,6 +823,23 @@ li.active {
 	padding: 0;
 	width: 500px;
 }
+#table .ligne-wrapper {
+	position: absolute;
+	pointer-events:none;
+}
+#table .ligne-handler {
+	width:14px;
+	height:14px;
+	background: none;
+	border:1px solid black;
+	position:absolute;
+	top:0;
+	left:0;
+	pointer-events:auto;
+}
+#table .ligne {
+	pointer-events: none;
+}
 #table .note{
 	cursor:move;
 	padding-top:15px;
@@ -602,19 +873,27 @@ li.active {
 	z-index:0;
 }
 .ombre-1 {
-	box-shadow: 3px 3px 9px RGBA(0,0,0,.7);
+	box-shadow: 0px 0px 20px RGBA(0,0,0,.7);
+	-moz-box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.7);
+	-webkit-box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.7);
 	z-index:1;
 }
 .ombre-2 {
-	box-shadow: 6px 6px 10px RGBA(0,0,0,.7);
+	box-shadow: 0px 0px 30px RGBA(0,0,0,.7);
+	-moz-box-shadow: 0px 0px 30px rgba(0, 0, 0, 0.7);
+	-webkit-box-shadow: 0px 0px 30px rgba(0, 0, 0, 0.7);
 	z-index:2;
 }
 .ombre-3 {
-	box-shadow: 7px 7px 15px RGBA(0,0,0,.6);
+	box-shadow: 0px 0px 45px RGBA(0,0,0,.7);
+	-moz-box-shadow: 0px 0px 45px rgba(0, 0, 0, 0.7);
+	-webkit-box-shadow: 0px 0px 45px rgba(0, 0, 0, 0.7);
 	z-index:3;
 }
 .ombre-4 {
-	box-shadow: 8px 8px 20px RGBA(0,0,0,0.6);
+	box-shadow: 0px 0px 60px RGBA(0,0,0,.7);
+	-moz-box-shadow: 0px 0px 60px rgba(0, 0, 0, 0.7);
+	-webkit-box-shadow: 0px 0px 60px rgba(0, 0, 0, 0.7);
 	z-index:4;
 }
 .lvl-0 {
@@ -711,49 +990,62 @@ li.active {
 /*------- ZOOM -------------------------*/
 #zoomButtons {
 	position:fixed;
-	bottom:20px;
+	top:20px;
 	right:40px;
-	width:30px;
-	height:60px;
-	box-shadow:0 0 10px rgba(0,0,0,.2);
-	border: 1px solid #aaa;
-	background:#fff;
+	width:71px;
+	height:35px;
+	box-shadow:0 0 10px rgba(0,0,0,.5);
+	-moz-box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+	-webkit-box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+	background: rgba(0, 0, 0, 0.5);
 }
 #zoomPlus, #zoomMoins {
-	width:28px;
-	height:28px;
+	width:35px;
+	height:35px;
 	border:0;
 	position:absolute;
-	text-indent:99999999px;
 	cursor:pointer;
+	background: white;
+	color: black;
+	font-size: 21px;
+	line-height: 35px;
+	font-family: 'notcouriersansregular', monospace;
+	text-align: center;
 }
 #zoomPlus {
-	top:0;
 	left:0;
-	border-bottom:1px solid #aaa;
-	background-image: url('http://www.archipels.org/atlas/wp-content/themes/html5blank-master/img/IconesMenu/plus_N.png');
 }
 #zoomMoins {
-	bottom:0;
-	left:0;
-	background-image: url('http://www.archipels.org/atlas/wp-content/themes/html5blank-master/img/IconesMenu/moins_N.png');
+	right:0;
 }
 
 /*----Panneau-------------------------*/
 #interface{
 	position: fixed;
-	top: 3%;
-	left: -460px;
+	top: 56px;
+	left: -480px;
 	width: 460px;
-	bottom:0;
-	height: 93%;
-	box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.5);
-	-moz-box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.5);
-	-webkit-box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.5);
+	bottom:20px;
+	box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+	-moz-box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+	-webkit-box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
 }
+/*
+#panneau {
+    position: absolute;
+    height: auto;
+    bottom: 10px;
+    top: 46px;
+}
+*/
+
 #interface.reduit{
-	bottom:inherit;
-	height: inherit;
+	/*bottom:inherit;
+	height: inherit;*/
+	height: 110px;
+}
+#interface.reduit .content, #interface.reduit .pane {
+ bottom: 0;
 }
 
 #ouvrirPanneau {
@@ -766,7 +1058,7 @@ li.active {
 #panneau{
 	position: relative;
 	background: #FFF;
-	padding: 20px;
+	padding: 6px 20px 20px 20px;
 	overflow: hidden;
 	height: 100%;
 	bottom:0;
@@ -775,11 +1067,11 @@ li.active {
 #panneau2{
 	position: absolute;
 	top: 0;
-	left: 460px;
+	right: 0;
 	bottom: 0;
 	width: 760px;
 	background: #FFF;
-	padding: 20px;
+	padding: 11px 20px 20px 20px;
 	overflow: hidden;
 	display: none;
 	padding-left: 0;
@@ -798,43 +1090,42 @@ li.active {
 	top: 3px;
 	left:20px;
 	cursor:pointer;
+	display:none;
 }
 #edit_element {
 	position: absolute;
-	top: 4px;
+	bottom: 4px;
 	left: 221px;
 }
-#panneau.reduit #reduire {
+#panneau #reduire {
 	position:absolute;
-	top: 2px;
-	left:35px;
-	cursor:pointer;	
+	bottom: 0;
+	left:0;
+	height: 20px;
+	width: 100%;
+	cursor: ns-resize;
+	text-indent: -99999px;
 }
 #panneau.reduit #reduire:after {
 	content:"⊟";
 }
 #panneau.reduit {
-	bottom:inherit;
+	/*bottom:inherit;
 	bottom: inherit;
 	height: initial;
-	padding-bottom: 0;
+	padding-bottom: 0;*/
 }
 #panneau .texte{
 	width:100%;
 	padding-top: 10px;
 }
-#panneau.agrandit #reduire {
-	position:absolute;
-	top: 4px;
-	left:35px;
-	cursor:pointer;
-}
 #panneau.agrandit #reduire:after {
 	content:"–";
 }
-#panneau.agrandit {
+#panneau {
 	bottom:0;
 }
+/*
 #panneau.reduit .content {
 	position:relative !important;
 	overflow: hidden;
@@ -842,11 +1133,13 @@ li.active {
 #panneau.reduit .en-tete {
 	overflow: hidden;
 }
+*/
 #panneau.agrandit .miniature, #panneau.agrandit .texte, #panneau.agrandit .meta, #panneau.agrandit #enlarge,  #panneau.reduit .avatars {
 	display:block;
 }
 #panneau.reduit .miniature, #panneau.reduit .texte,  #panneau.reduit .meta,  #panneau.reduit .avatars, #panneau.reduit #enlarge {
-	display:none;
+	/*display:none;*/
+	display:block;
 }
 #panneau .content, #panneau .pane{
 	bottom: 28px;
@@ -886,11 +1179,18 @@ li.active {
 	position:relative;
 }
 #enlarge {
-	font-size:14px;
-	position:absolute;
-	top: 2px;
-	left: 430px;
-	cursor:pointer;
+	font-size: 14px;
+	position: absolute;
+	top: 0;
+	right: 0;
+	height: 100%;
+	width: 15px;
+	cursor: ew-resize;
+	text-indent: -999999px;
+	z-index: 9999;
+}
+#enlarge:hover{
+	background: #FAFAFA;
 }
 #panneau .citation {
 	z-index: 99;
@@ -1158,7 +1458,7 @@ ul {
 	padding: 0 10px 0 10px;
 	height:20px;
 	transition-property: top;
-	transition-duration: 0.1s;
+	transition-duration: 0.2s;
 	transition-timing-function: ease-in;
 }
 #lien_atlas:hover{
@@ -1181,7 +1481,7 @@ ul {
 	padding: 0 10px 0 10px;
 	height:20px;
 	transition-property: bottom;
-	transition-duration: 0.1s;
+	transition-duration: 0.2s;
 	transition-timing-function: ease-in;
 }
 #lien_table:hover{
@@ -1221,6 +1521,8 @@ ul {
 	padding-left: 3px;
 	background: #fff;
 	box-shadow: 0px 0px 20px #fff;
+	-moz-box-shadow: 0px 0px 20px #fff;
+	-webkit-box-shadow: 0px 0px 20px #fff;
 	text-shadow: 0px 0px 25px rgba(0, 0, 0, 0.29);
 }
 
@@ -1288,6 +1590,10 @@ ul {
 }
 #atlas .elementSymbole.surligne{
 	opacity:1;
+	box-shadow: 0 0 200px #0ff !important;
+	-moz-box-shadow: 0 0 200px #0ff !important;
+	-webkit-box-shadow: 0 0 200px #0ff !important;
+	background: rgba(0,255,255, 0.15);
 }
 #atlas .elementSymbole.non-surligne{
 	opacity:.5;
@@ -1344,7 +1650,7 @@ ul {
 	z-index:2;
 }
 #ecranAtlas{
-	z-index:3;
+	z-index:0; // it was 3 but I changed it
 }
 #interface{
 	z-index:4;
@@ -1354,7 +1660,7 @@ ul {
 	position: fixed;
 }
 #map{
-	z-index:3;
+/*	z-index:3; */
 }
 #atlas .elementSymbole .classification>g>object {
 	width:80px;
@@ -1419,13 +1725,17 @@ ul {
 
 /* Champ de recherche par formule */
 .atlas #recherche {
-	width: 150px;
+	width: 143px;
 	position: fixed;
-	top: 0;
-	left: 500px;
-	background: #fff;
-	padding: 30px 20px 20px 20px;
+	top: 55px;
+	right: 371px;
+	background: rgba(255, 255, 255, .78);;
+	padding: 15px 10px 6px 10px;;
 	display:none;
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+	-moz-box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+	-webkit-box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+
 }
 .atlas #recherche #formule{
 	line-height: 20px;
@@ -1507,8 +1817,9 @@ div#cursor {
 	display:inline;
 
 }
+/*
 .atlas #outils .bouton_classification{
-	position: fixed;
+	position: relative;
 	top: 5px;
 	left: 517px;
 }
@@ -1527,6 +1838,7 @@ div#cursor {
 	top: 5px;
 	left: 817px;
 }
+*/
 .atlas #outils #historique {
 	position: fixed;
 	bottom: 35px;
@@ -1589,12 +1901,7 @@ div#cursor {
          url('fonts/f_grotesk_book-webfont.svg#f_groteskbook') format('svg');
     font-weight: normal;
     font-style: normal;
-
 }
-
-
-
-
 @font-face {
     font-family: 'f_grotesk';
     src: url('fonts/f_grotesk_book_italic-webfont.eot');
@@ -1604,12 +1911,7 @@ div#cursor {
          url('fonts/f_grotesk_book_italic-webfont.svg#f_groteskbook_italic') format('svg');
     font-weight: normal;
     font-style: italic;
-
 }
-
-
-
-
 @font-face {
     font-family: 'f_grotesk';
     src: url('fonts/f_grotesk_demi-webfont.eot');
@@ -1619,12 +1921,7 @@ div#cursor {
          url('fonts/f_grotesk_demi-webfont.svg#f_groteskdemi') format('svg');
     font-weight: bold;
     font-style: normal;
-
 }
-
-
-
-
 @font-face {
     font-family: 'f_grotesk';
     src: url('fonts/f_grotesk_demi_italic-webfont.eot');
@@ -1634,8 +1931,19 @@ div#cursor {
          url('fonts/f_grotesk_demi_italic-webfont.svg#f_groteskdemi_italic') format('svg');
     font-weight: bold;
     font-style: italic;
-
 }
+@font-face {
+    font-family: 'notcouriersansregular';
+    src: url('fonts/NotCourierSans-webfont.eot');
+    src: url('fonts/NotCourierSans-webfont.eot?#iefix') format('embedded-opentype'),
+         url('fonts/NotCourierSans-webfont.woff') format('woff'),
+         url('fonts/NotCourierSans-webfont.ttf') format('truetype'),
+         url('fonts/NotCourierSans-webfont.svg#notcouriersansregular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+
 
 /*------------------------------------*\
     RESPONSIVE

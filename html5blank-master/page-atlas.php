@@ -178,7 +178,7 @@
 	
 	<div id="outils">
 		
-		<div id="recherche">
+		<div id="recherche" class="noSelection">
 			<div id="formule">
 				<div class="symboles">
 					<div class="bouton class1" title="immateriel"><img src="<?php echo $template_url ?>/img/immateriel.png" alt="immateriel" width="20" height="20" /></div><span class="detail">Immateriel</span><br>
@@ -195,31 +195,33 @@
 				<div class="champ"></div>
 			</div>
 		</div>
-		
-		<label class="bouton_classification">
+		<div id="boutons" class="noSelection">
 			<input type="checkbox" id="show_classification" class="tips-bottom" title="Classification" >
+			<label class="bouton_classification" for="show_classification" onclick>
 				<img src="<?php echo $template_url ?>/img/classification.png" width="23" height="13" />
-		</label>
-		<label class="bouton_periode">
+			</label>
 			<input type="checkbox" id="show_historique" class="tips-bottom" title="Période">
+			<label class="bouton_periode" for="show_historique" onclick>
 				<img src="<?php echo $template_url ?>/img/periode.png" width="23" height="13" />
-		</label>
-		<label class="bouton_geographie">
+			</label>
 			<input type="checkbox" id="show_carte" class="tips-bottom"  title="Atlas géographique">
+			<label class="bouton_geographie" for="show_carte" onclick>
 				<img src="<?php echo $template_url ?>/img/map.png" width="23" height="13" />
-		</label>				
-		<?php // if ( is_user_logged_in() ) { ?>
-		<label class="bouton_laliste">
+			</label>				
+			<?php // if ( is_user_logged_in() ) { ?>
 			<input type="checkbox" id="show_laliste" class="tips-bottom"  title="Liste">
+			<label class="bouton_laliste" for="show_laliste" onclick>
 				<img src="<?php echo $template_url ?>/img/liste.png" width="23" height="13" />
-		</label>
-		<?php // } ?>
+			</label>
 		
-		<div id="champ-recherche">
-			<?php get_template_part('searchform'); ?>
+			<?php // } ?>
+		
+			<div id="champ-recherche">
+				<?php get_template_part('searchform'); ?>
+			</div>
 		</div>
 		
-		<div id="historique">
+		<div id="historique" class="noSelection">
 			<p>
 			  <p class="detail date" id="annee1"></p>
 			  <p class="detail date" id="annee2"></p>
