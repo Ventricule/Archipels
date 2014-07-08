@@ -1101,10 +1101,13 @@ li.active {
 	position:absolute;
 	bottom: 0;
 	left:0;
-	height: 20px;
+	height: 15px;
 	width: 100%;
 	cursor: ns-resize;
 	text-indent: -99999px;
+}
+#reduire:hover{
+	background: #F7F7F7;
 }
 #panneau.reduit #reduire:after {
 	content:"⊟";
@@ -1190,7 +1193,7 @@ li.active {
 	z-index: 9999;
 }
 #enlarge:hover{
-	background: #FAFAFA;
+	background: #F7F7F7;
 }
 #panneau .citation {
 	z-index: 99;
