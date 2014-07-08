@@ -154,25 +154,6 @@ $(function() {
 			reduirePanneau();
 		}
 	});
-	$(document).on({
-		mouseenter: function () {
-			$('#interface').css('bottom', 25);
-		},
-		mouseleave: function () {
-			$('#interface').css('bottom', 20);
-		}
-	}, "#interface.agrandit #reduire");
-	var interface_h = 100 ;
-	$(document).on({
-		mouseenter: function () {
-			interface_h = $('#interface').height();
-			$('#interface').height(interface_h+5);
-		},
-		mouseleave: function () {
-			interface_h = $('#interface').height();
-			$('#interface').height(interface_h-5);
-		}
-	}, "#interface.reduit #reduire"); 
 	
 	function fermerPanneau(){
 		//$("#interface .modifier").hide();
@@ -198,6 +179,7 @@ $(function() {
 		$('#interface').addClass('agrandit');
 		$(".nano").nanoScroller(); 
 		$('#interface').css('bottom', 20);
+		$('#interface').css('height', '');
     	openItem($('#interface, #tables, #closeButton'));
 		setCookie('panneau', 2);
 		if ( $('#panneau .content').children().length == 0 ) {
@@ -224,7 +206,8 @@ $(function() {
 		$('#enlarge').prependTo('#panneau');
 		$('#panneau2').hide();
 		$('#panneau .pane').remove();
-		var h = $('#interface .en-tete').height() + 25;
+		var h = $('#interface .en-tete').height() + 20;
+		console.log(h);
 		$('#interface').css('height', h);
 		setCookie('panneau', 1);
 		if ( $('#panneau .content').children().length == 0 ) {
